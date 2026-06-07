@@ -63,12 +63,13 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 double-booking. 21 tests pass.
 **Verify:** ✅ DOM-inspected live views + unit tests + build. (Screenshots flaky in this env.)
 
-## T7 — Overview (colored small-multiples)
-- [ ] Zoomed-out grid: render a mini timetable per entity for all sections / all rooms / all instructors (separate tiles), color-coded
-- [ ] Click a tile → opens that entity in the detailed view (T5/T6)
+## T7 — Overview (colored small-multiples)  ✅
+- [x] `/overview` page with view-kind toggle; tile grid of `MiniTimetable` (compact label-less day×hour bars)
+- [x] Conflict-colored bars + per-tile conflict badge; tiles link to `/?view=&id=` detail (T5/T6)
 
-**Acceptance:** overview shows every entity of the chosen kind at a glance with conflict coloring; tile click navigates to detail.
-**Verify:** visual check that tile count matches master list count.
+**Acceptance:** ✅ room kind → 10 tiles (= rooms), 6 with conflict badges, 52 bars total (= meetings),
+tiles deep-link to detail.
+**Verify:** ✅ DOM-inspected live overview + build.
 
 ## T8 — Master CRUD + Meeting editor + Save  → **CP-C**
 - [ ] CRUD for Section (incl. headcount, theory/practical hours), Instructor, Room (incl. capacity)

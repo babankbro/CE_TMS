@@ -1,39 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Dataset, Meeting, ViewKind } from "@/lib/types";
+import type { Dataset, ViewKind } from "@/lib/types";
 import { fetchDataset } from "@/lib/api";
-import { meetingsForSection, meetingsForInstructor, meetingsForRoom } from "@/lib/select";
+import { VIEW_OPTIONS, entitiesFor, meetingsFor } from "@/lib/select";
 import { detectConflicts } from "@/lib/conflicts";
 import Timetable from "@/components/Timetable";
-
-const VIEW_OPTIONS: { kind: ViewKind; label: string }[] = [
-  { kind: "section", label: "กลุ่มเรียน" },
-  { kind: "instructor", label: "อาจารย์ผู้สอน" },
-  { kind: "room", label: "ห้องเรียน" },
-];
-
-function entitiesFor(dataset: Dataset, kind: ViewKind): { id: string; label: string }[] {
-  switch (kind) {
-    case "section":
-      return dataset.sections.map((s) => ({ id: s.id, label: s.code }));
-    case "instructor":
-      return dataset.instructors.map((i) => ({ id: i.id, label: i.name }));
-    case "room":
-      return dataset.rooms.map((r) => ({ id: r.id, label: r.name }));
-  }
-}
-
-function meetingsFor(dataset: Dataset, kind: ViewKind, entityId: string): Meeting[] {
-  switch (kind) {
-    case "section":
-      return meetingsForSection(dataset, entityId);
-    case "instructor":
-      return meetingsForInstructor(dataset, entityId);
-    case "room":
-      return meetingsForRoom(dataset, entityId);
-  }
-}
 
 export default function TimetablePage() {
   const [dataset, setDataset] = useState<Dataset | null>(null);
