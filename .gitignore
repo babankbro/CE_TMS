@@ -1,0 +1,18 @@
+# Node / Next.js
+node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+
+# Env
+.env
+.env.local
+.env*.local
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

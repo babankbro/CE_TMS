@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -R /tmp/skills-tmp/skills/engineering 2>&1 | tail -30 && echo \"===USER SKILLS DIR===\" && ls \"/c/Users/baban/.claude/skills\" 2>&1)",
+      "Bash(python -c ' *)",
+      "Bash(python -m pip install pdfplumber -q)",
+      "Bash(npm -v)",
+      "Bash(git --version)",
+      "Bash(git init *)",
+      "Bash(node -e \"console.log\\('checking create-next-app availability'\\)\")",
+      "Bash(npx --yes create-next-app@latest web --ts --tailwind --app --eslint --no-src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
+      "Bash(npm run *)"
+    ]
+  }
+}
