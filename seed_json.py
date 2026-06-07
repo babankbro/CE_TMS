@@ -22,6 +22,27 @@ INSTRUCTOR_TITLES = r"(?:ผู้ช่วยศาสตราจารย์|
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(ROOT, "web", "data")
 
+# Headcount per section (students). Temporary uniform estimate of 20 until real
+# numbers are known; edit these or adjust per-section in the app (T8). 0 = unknown.
+SECTION_HEADCOUNT = {
+    "ce6541": 20, "ce6641": 20, "ce6721": 20,
+    "ce6741": 20, "ce6821": 20, "ce6841": 20,
+}
+
+# Suffixes the PDF/CSV truncate; completed to their well-known full forms.
+TRUNCATION_FIXES = [
+    ("ระบบอัตโ", "ระบบอัตโนมัติ"),
+    ("เทคโนโลยีอุ", "เทคโนโลยีอุตสาหกรรม"),
+]
+
+
+def clean_room(name):
+    n = norm_ws(name)
+    for cut, full in TRUNCATION_FIXES:
+        if n.endswith(cut):
+            n = n[: -len(cut)] + full
+    return n
+
 
 def norm_ws(s):
     return re.sub(r"\s+", " ", (s or "").replace("\n", " ")).strip()
@@ -146,7 +167,7 @@ def main():
     instructors, rooms = {}, {}   # norm_key -> {id, name}
     room_variants, instr_variants = {}, {}  # id -> set(raw)
 
-    def intern(store, variants, prefix, raw):
+    def intern(store, variants, prefix, raw, prefer_clean=False):
         key = norm_key(raw)
         if not key:
             return None
@@ -154,6 +175,8 @@ def main():
             ident = f"{prefix}{len(store) + 1}"
             store[key] = {"id": ident, "name": raw}
             variants[ident] = set()
+        elif prefer_clean and raw.count(" ") < store[key]["name"].count(" "):
+            store[key]["name"] = raw  # prefer the variant with fewest line-wrap spaces
         variants[store[key]["id"]].add(raw)
         return store[key]["id"]
 
@@ -167,7 +190,8 @@ def main():
         for c in top:
             sec_code = c["section"] or os.path.basename(path).split("-")[0]
             sec_id = sec_code.lower()
-            sections.setdefault(sec_id, {"id": sec_id, "code": sec_code, "name": sec_code, "headcount": 0})
+            sections.setdefault(sec_id, {"id": sec_id, "code": sec_code, "name": sec_code,
+                                         "headcount": SECTION_HEADCOUNT.get(sec_id, 0)})
             instr_ids = [intern(instructors, instr_variants, "i", n) for n in c["instructors"]]
             instr_ids = [i for i in instr_ids if i]
             course_id = f"{sec_id}__{c['code']}"
@@ -183,7 +207,7 @@ def main():
             course_id = f"{file_section}__{mb['code']}"
             if course_id not in courses:
                 continue  # block code not in this file's top table
-            room_id = intern(rooms, room_variants, "r", mb["room"]) if mb["room"] else None
+            room_id = intern(rooms, room_variants, "r", mb["room"], prefer_clean=True) if mb["room"] else None
             meetings.append({
                 "id": f"m{len(meetings) + 1}", "courseId": course_id,
                 "roomId": room_id or "", "day": mb["day"],
@@ -195,7 +219,7 @@ def main():
         "sections": list(sections.values()),
         "courses": list(courses.values()),
         "instructors": [{"id": v["id"], "name": v["name"]} for v in instructors.values()],
-        "rooms": [{"id": v["id"], "name": v["name"], "capacity": 35} for v in rooms.values()],
+        "rooms": [{"id": v["id"], "name": clean_room(v["name"]), "capacity": 35} for v in rooms.values()],
         "meetings": meetings,
     }
 
