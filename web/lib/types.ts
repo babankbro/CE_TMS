@@ -12,14 +12,23 @@ export const DAY_LABELS_TH: Record<Day, string> = {
   FRI: "ศุกร์",
 };
 
-/** A student-group course offering, e.g. CE6541. */
+/** A student group, e.g. CE6541. Takes many Courses. */
 export interface Section {
   id: string;
   code: string;
   name: string;
+  headcount: number;
+}
+
+/** A subject offered to a Section (EN code). Carries hours + assigned instructors. */
+export interface Course {
+  id: string;
+  code: string;
+  name: string;
+  sectionId: string;
   theoryHours: number;
   practicalHours: number;
-  headcount: number;
+  instructorIds: string[];
 }
 
 export interface Instructor {
@@ -36,12 +45,11 @@ export interface Room {
 
 /**
  * One teaching block — one row of the timetable. Exactly one day.
- * start/end are integer hours in 8..21. May reference several instructors (co-teaching).
+ * start/end are integer hours in 8..21. Section and instructors are derived from the Course.
  */
 export interface Meeting {
   id: string;
-  sectionId: string;
-  instructorIds: string[];
+  courseId: string;
   roomId: string;
   day: Day;
   start: number;
@@ -52,6 +60,7 @@ export interface Meeting {
 export interface Dataset {
   version: number;
   sections: Section[];
+  courses: Course[];
   instructors: Instructor[];
   rooms: Room[];
   meetings: Meeting[];

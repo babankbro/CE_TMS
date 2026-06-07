@@ -7,14 +7,20 @@ timetable data extracted from the official schedule PDFs.
 ## Language
 
 **Section**:
-A student-group code for one course offering, e.g. `CE6541`. The grouping key that students
-belong to. One Section contains many Meetings.
-_Avoid_: Class, group, course
+A student-group code, e.g. `CE6541`. The group that students belong to and that owns a Headcount.
+One Section takes many Courses; one PDF is one Section's timetable.
+_Avoid_: Class, group
+
+**Course**:
+A subject offered to a Section, identified by an EN code (e.g. `EN-001-016`). Carries its own name,
+Theory/Practical hours, and assigned Instructor(s). The top table of the Schedule Sheet lists a
+Section's Courses. The same EN subject taught to two Sections is two Course records.
+_Avoid_: Subject, class
 
 **Meeting**:
-A single teaching block — one row of the timetable — pairing a Section with an instructor, a room,
-exactly one Day, and a start/end time. The unit that is added, edited, and deleted. A course taught
-on two days is two separate Meetings.
+A single teaching block — one row of the timetable — placing one Course in a Room on exactly one Day
+for a start/end time. Section and Instructor(s) are derived from the Course. The unit that is added,
+edited, and deleted. A Course meeting on two days is two separate Meetings.
 _Avoid_: Slot, class, period
 
 **Day**:
@@ -22,10 +28,10 @@ The weekday a Meeting occurs on. The valid range is Monday–Friday (จัน�
 weekend Meetings. The existing `combined_courses.csv` is missing this field and must be corrected.
 
 **Conflict**:
-Two Meetings whose times overlap when grouped under the same view key (same Instructor, same Room,
-or same Section). Conflicts are highlighted red. Two exceptions are NOT conflicts:
+Two Meetings whose times overlap on the same Day when grouped under the same view key (same Instructor,
+same Room, or same Section). Conflicts are highlighted red. Two exceptions are NOT conflicts:
 - **Shared Room**: two Sections sharing one Room at overlapping times, where their combined headcount ≤ that Room's capacity.
-- **Co-teaching**: instructor time-overlap when the instructor co-teaches the same course.
+- **Co-teaching**: instructor time-overlap when the overlapping Meetings belong to the same Course.
 
 **Room**:
 A physical teaching space with a name and a capacity (max students). Capacity defaults to 35 but is
@@ -40,12 +46,12 @@ The number of students in a Section. Used to decide whether a Shared Room is all
 Not present in current source data — must be added per Section.
 
 **Co-teaching**:
-Two or more instructors teaching the same course together. In source data this appears as multiple
-instructor names in one cell (e.g. "อ.สรายุทธ กรวิรัตน์ ,อ.อัจฉรา ชุมพล"). Co-taught instructor
-overlap is not a Conflict.
+Two or more Instructors assigned to the same Course. In source data this appears as multiple
+instructor names in one top-table cell (e.g. "อ.สรายุทธ กรวิรัตน์ ,อ.อัจฉรา ชุมพล"). Overlap between
+Meetings of the same Course is not a Conflict.
 
 **Contact Hours (ท+ป)**:
-A Section's teaching hours split into Theory (ท) and Practical (ป). Shown in the top course table of
+A Course's teaching hours split into Theory (ท) and Practical (ป). Shown in the top course table of
 the original schedule sheet and must be retained.
 
 **Schedule Sheet**:

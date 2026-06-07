@@ -2,13 +2,21 @@ import { describe, it, expect } from "vitest";
 import { detectConflicts, overlaps } from "./conflicts";
 import type { Dataset, Meeting } from "./types";
 
-function makeDataset(meetings: Meeting[], over: Partial<Dataset> = {}): Dataset {
+// Sections s1,s2 (20 each), s3 (10).
+// Courses: c1→s1(i1), c2→s1(i1), c3→s2(i1), c4→s3(i2). c1 is co-taught by i1+i2.
+function makeDataset(meetings: Meeting[]): Dataset {
   return {
     version: 1,
     sections: [
-      { id: "s1", code: "CE6541", name: "A", theoryHours: 0, practicalHours: 0, headcount: 20 },
-      { id: "s2", code: "CE6641", name: "B", theoryHours: 0, practicalHours: 0, headcount: 20 },
-      { id: "s3", code: "CE6721", name: "C", theoryHours: 0, practicalHours: 0, headcount: 10 },
+      { id: "s1", code: "CE6541", name: "A", headcount: 20 },
+      { id: "s2", code: "CE6641", name: "B", headcount: 20 },
+      { id: "s3", code: "CE6721", name: "C", headcount: 10 },
+    ],
+    courses: [
+      { id: "c1", code: "EN-1", name: "C1", sectionId: "s1", theoryHours: 0, practicalHours: 0, instructorIds: ["i1", "i2"] },
+      { id: "c2", code: "EN-2", name: "C2", sectionId: "s1", theoryHours: 0, practicalHours: 0, instructorIds: ["i1"] },
+      { id: "c3", code: "EN-3", name: "C3", sectionId: "s2", theoryHours: 0, practicalHours: 0, instructorIds: ["i1"] },
+      { id: "c4", code: "EN-4", name: "C4", sectionId: "s3", theoryHours: 0, practicalHours: 0, instructorIds: ["i2"] },
     ],
     instructors: [
       { id: "i1", name: "อ.หนึ่ง" },
@@ -16,13 +24,11 @@ function makeDataset(meetings: Meeting[], over: Partial<Dataset> = {}): Dataset 
     ],
     rooms: [{ id: "r1", name: "ห้อง A", capacity: 35 }],
     meetings,
-    ...over,
   };
 }
 
 const m = (p: Partial<Meeting> & { id: string }): Meeting => ({
-  sectionId: "s1",
-  instructorIds: ["i1"],
+  courseId: "c1",
   roomId: "r1",
   day: "MON",
   start: 8,
@@ -43,42 +49,41 @@ describe("overlaps", () => {
 });
 
 describe("detectConflicts - section view", () => {
-  it("flags overlapping meetings of the same section", () => {
+  it("flags overlapping meetings of the same section (different courses)", () => {
     const meetings = [
-      m({ id: "a", sectionId: "s1", start: 8, end: 12 }),
-      m({ id: "b", sectionId: "s1", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c1", start: 8, end: 12 }), // s1
+      m({ id: "b", courseId: "c2", start: 10, end: 14 }), // s1
     ];
-    const c = detectConflicts(meetings, makeDataset(meetings), "section");
-    expect(c).toEqual(new Set(["a", "b"]));
+    expect(detectConflicts(meetings, makeDataset(meetings), "section")).toEqual(new Set(["a", "b"]));
   });
   it("does not flag adjacent meetings", () => {
     const meetings = [
-      m({ id: "a", sectionId: "s1", start: 8, end: 10 }),
-      m({ id: "b", sectionId: "s1", start: 10, end: 12 }),
+      m({ id: "a", courseId: "c1", start: 8, end: 10 }),
+      m({ id: "b", courseId: "c2", start: 10, end: 12 }),
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "section").size).toBe(0);
   });
   it("does not flag overlapping meetings of different sections", () => {
     const meetings = [
-      m({ id: "a", sectionId: "s1", start: 8, end: 12 }),
-      m({ id: "b", sectionId: "s2", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c1", start: 8, end: 12 }), // s1
+      m({ id: "b", courseId: "c3", start: 10, end: 14 }), // s2
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "section").size).toBe(0);
   });
 });
 
 describe("detectConflicts - instructor view", () => {
-  it("flags one instructor double-booked across different sections", () => {
+  it("flags one instructor double-booked across different courses", () => {
     const meetings = [
-      m({ id: "a", instructorIds: ["i1"], sectionId: "s1", start: 8, end: 12 }),
-      m({ id: "b", instructorIds: ["i1"], sectionId: "s2", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c2", start: 8, end: 12 }), // i1
+      m({ id: "b", courseId: "c3", start: 10, end: 14 }), // i1
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "instructor")).toEqual(new Set(["a", "b"]));
   });
-  it("does NOT flag co-teaching: same instructor, same section, overlapping", () => {
+  it("does NOT flag overlapping meetings of the SAME course (co-teaching)", () => {
     const meetings = [
-      m({ id: "a", instructorIds: ["i1"], sectionId: "s1", start: 8, end: 12 }),
-      m({ id: "b", instructorIds: ["i1"], sectionId: "s1", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c1", start: 8, end: 12 }),
+      m({ id: "b", courseId: "c1", start: 10, end: 14 }),
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "instructor").size).toBe(0);
   });
@@ -86,18 +91,18 @@ describe("detectConflicts - instructor view", () => {
 
 describe("detectConflicts - room view", () => {
   it("does NOT flag a shared room when combined headcount <= capacity", () => {
-    // s1=20 + s3=10 = 30 <= 35
+    // c1→s1=20, c4→s3=10 → 30 <= 35
     const meetings = [
-      m({ id: "a", sectionId: "s1", roomId: "r1", start: 8, end: 12 }),
-      m({ id: "b", sectionId: "s3", roomId: "r1", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c1", roomId: "r1", start: 8, end: 12 }),
+      m({ id: "b", courseId: "c4", roomId: "r1", start: 10, end: 14 }),
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "room").size).toBe(0);
   });
   it("flags a shared room when combined headcount > capacity", () => {
-    // s1=20 + s2=20 = 40 > 35
+    // c1→s1=20, c3→s2=20 → 40 > 35
     const meetings = [
-      m({ id: "a", sectionId: "s1", roomId: "r1", start: 8, end: 12 }),
-      m({ id: "b", sectionId: "s2", roomId: "r1", start: 10, end: 14 }),
+      m({ id: "a", courseId: "c1", roomId: "r1", start: 8, end: 12 }),
+      m({ id: "b", courseId: "c3", roomId: "r1", start: 10, end: 14 }),
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "room")).toEqual(new Set(["a", "b"]));
   });
