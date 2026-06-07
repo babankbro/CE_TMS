@@ -21,8 +21,11 @@ export default function Timetable({ dataset, meetings, conflictIds }: TimetableP
   const courseById = new Map(dataset.courses.map((c) => [c.id, c]));
   const roomById = new Map(dataset.rooms.map((r) => [r.id, r]));
   const instructorById = new Map(dataset.instructors.map((i) => [i.id, i]));
+  const sectionById = new Map(dataset.sections.map((s) => [s.id, s]));
 
   const shortRoom = (roomId: string) => (roomById.get(roomId)?.name ?? "").split(" ")[0];
+  const sectionCode = (courseId: string) =>
+    sectionById.get(courseById.get(courseId)?.sectionId ?? "")?.code ?? "";
   const instructorNames = (courseId: string) =>
     (courseById.get(courseId)?.instructorIds ?? [])
       .map((id) => instructorById.get(id)?.name ?? "")
@@ -84,7 +87,9 @@ export default function Timetable({ dataset, meetings, conflictIds }: TimetableP
                     >
                       <div className="font-medium">{course?.code ?? meeting.courseId}</div>
                       <div className="truncate text-[11px] opacity-80">{course?.name}</div>
-                      <div className="truncate text-[11px] opacity-70">{shortRoom(meeting.roomId)}</div>
+                      <div className="truncate text-[11px] opacity-70">
+                        {sectionCode(meeting.courseId)} · {shortRoom(meeting.roomId)}
+                      </div>
                     </div>
                   );
                 })}

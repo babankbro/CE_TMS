@@ -17,6 +17,8 @@ function makeDataset(meetings: Meeting[]): Dataset {
       { id: "c2", code: "EN-2", name: "C2", sectionId: "s1", theoryHours: 0, practicalHours: 0, instructorIds: ["i1"] },
       { id: "c3", code: "EN-3", name: "C3", sectionId: "s2", theoryHours: 0, practicalHours: 0, instructorIds: ["i1"] },
       { id: "c4", code: "EN-4", name: "C4", sectionId: "s3", theoryHours: 0, practicalHours: 0, instructorIds: ["i2"] },
+      // same subject EN-1 offered to a second section (combined-class scenario)
+      { id: "c5", code: "EN-1", name: "C1", sectionId: "s2", theoryHours: 0, practicalHours: 0, instructorIds: ["i1"] },
     ],
     instructors: [
       { id: "i1", name: "อ.หนึ่ง" },
@@ -84,6 +86,14 @@ describe("detectConflicts - instructor view", () => {
     const meetings = [
       m({ id: "a", courseId: "c1", start: 8, end: 12 }),
       m({ id: "b", courseId: "c1", start: 10, end: 14 }),
+    ];
+    expect(detectConflicts(meetings, makeDataset(meetings), "instructor").size).toBe(0);
+  });
+  it("does NOT flag the same SUBJECT taught to two sections at once (combined class)", () => {
+    // c1 (EN-1 -> s1) and c5 (EN-1 -> s2), same instructor i1, overlapping
+    const meetings = [
+      m({ id: "a", courseId: "c1", start: 8, end: 12 }),
+      m({ id: "b", courseId: "c5", start: 10, end: 14 }),
     ];
     expect(detectConflicts(meetings, makeDataset(meetings), "instructor").size).toBe(0);
   });

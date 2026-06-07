@@ -51,12 +51,17 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 **Verify:** ✅ browser screenshot + 20 unit tests + build.
 **🛑 CHECKPOINT B:** confirm axes/time-range/placement before replicating.
 
-## T6 — Instructor + Room views
-- [ ] Reuse grid; add "View by Instructor" and "View by Room" with selectors
-- [ ] Wire view-specific conflict rules (co-teaching exception for instructor; capacity exception for room)
+## T6 — Instructor + Room views  ✅
+- [x] View-kind toggle (กลุ่มเรียน / อาจารย์ / ห้องเรียน) + entity selector; reuses `Timetable`
+- [x] Deep-linkable URL (`?view=room&id=r1`) — also enables T7 tile → detail navigation
+- [x] Block now shows section code (matters in room/instructor views)
+- [x] **Rule fix found via real data:** instructor co-teaching exception keys on course CODE, not
+      per-section courseId — same subject taught to two sections at once (combined class) is not a conflict
 
-**Acceptance:** instructor view groups that instructor's meetings (co-taught overlaps not red); room view groups by room (within-capacity shared rooms not red, over-capacity red).
-**Verify:** craft a co-teaching case and an over-capacity case; confirm coloring.
+**Acceptance:** ✅ room r1: 4 red (combined 40 > cap 35) + 5 blue; instructor i1: 0 red / 11 blue
+(all overlaps are same-subject combined classes). Unit test still flags different-subject instructor
+double-booking. 21 tests pass.
+**Verify:** ✅ DOM-inspected live views + unit tests + build. (Screenshots flaky in this env.)
 
 ## T7 — Overview (colored small-multiples)
 - [ ] Zoomed-out grid: render a mini timetable per entity for all sections / all rooms / all instructors (separate tiles), color-coded

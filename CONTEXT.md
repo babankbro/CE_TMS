@@ -31,7 +31,8 @@ weekend Meetings. The existing `combined_courses.csv` is missing this field and 
 Two Meetings whose times overlap on the same Day when grouped under the same view key (same Instructor,
 same Room, or same Section). Conflicts are highlighted red. Two exceptions are NOT conflicts:
 - **Shared Room**: two Sections sharing one Room at overlapping times, where their combined headcount ≤ that Room's capacity.
-- **Co-teaching**: instructor time-overlap when the overlapping Meetings belong to the same Course.
+- **Co-teaching**: instructor time-overlap when the overlapping Meetings are the same subject (same
+  Course code) — co-teaching, or one combined class taught to two Sections at once.
 
 **Room**:
 A physical teaching space with a name and a capacity (max students). Capacity defaults to 35 but is
@@ -46,9 +47,9 @@ The number of students in a Section. Used to decide whether a Shared Room is all
 Not present in current source data — must be added per Section.
 
 **Co-teaching**:
-Two or more Instructors assigned to the same Course. In source data this appears as multiple
-instructor names in one top-table cell (e.g. "อ.สรายุทธ กรวิรัตน์ ,อ.อัจฉรา ชุมพล"). Overlap between
-Meetings of the same Course is not a Conflict.
+Two or more Instructors assigned to the same Course (multiple names in one top-table cell, e.g.
+"อ.สรายุทธ กรวิรัตน์ ,อ.อัจฉรา ชุมพล"), or one instructor teaching the same subject to two Sections
+simultaneously (a combined class). Overlap between Meetings of the same subject (Course code) is not a Conflict.
 
 **Contact Hours (ท+ป)**:
 A Course's teaching hours split into Theory (ท) and Practical (ป). Shown in the top course table of

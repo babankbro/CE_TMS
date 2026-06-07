@@ -34,7 +34,10 @@ function isAllowedOverlap(
   if (view === "section") return false;
 
   if (view === "instructor") {
-    return a.courseId === b.courseId;
+    // Same subject (course code) — co-teaching or one combined class across sections.
+    const codeA = courseOf(a.courseId)?.code;
+    const codeB = courseOf(b.courseId)?.code;
+    return codeA !== undefined && codeA === codeB;
   }
 
   // room view: combined headcount of the distinct sections must fit the room capacity
