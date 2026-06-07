@@ -41,13 +41,14 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 **Verify:** ✅ live server round-trip (curl) + unit tests.
 **🛑 CHECKPOINT A:** review seed correctness + de-dup map + API round-trip before UI.
 
-## T5 — Load + Section grid view (thin vertical slice)  → **CP-B**
-- [ ] Client loads dataset from `/api/data` into an in-memory store
-- [ ] Grid component: rows = Day (จ–ศ), cols = 08:00–21:00 hourly; place meeting blocks by start/end
-- [ ] "View by Section" + section selector; conflicts (from T3) rendered red
+## T5 — Load + Section grid view (thin vertical slice)  ✅  → **CP-B**
+- [x] Client loads dataset from `/api/data` (`lib/api.ts`)
+- [x] `components/Timetable.tsx`: rows = Day (จ–ศ), cols = 08:00–21:00 hourly; blocks placed by start/end with lane stacking for overlaps
+- [x] `lib/layout.ts` lane assignment (5 unit tests); `lib/select.ts` meeting selectors
+- [x] Section view page with section selector; conflicts rendered red; conflict count banner
 
-**Acceptance:** selecting a Section shows its real meetings placed correctly on the จ–ศ × hour grid; overlapping section meetings show red.
-**Verify:** spot-check against a known PDF (e.g. CE6541) in the browser.
+**Acceptance:** ✅ selecting CE6541 places its meetings correctly (verified via screenshot vs seed: MON 9–11 EN-001-016, MON 13–14 EN-012-314, WED 9–10 EN-013-336, FRI 8–9 & 10–11 EN-013-338). No section has internal overlaps in real data (correct), so red is exercised in Room view at T6.
+**Verify:** ✅ browser screenshot + 20 unit tests + build.
 **🛑 CHECKPOINT B:** confirm axes/time-range/placement before replicating.
 
 ## T6 — Instructor + Room views
