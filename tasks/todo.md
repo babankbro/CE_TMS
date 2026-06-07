@@ -31,13 +31,14 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 **Acceptance:** all conflict unit tests pass, including both exceptions.
 **Verify:** `npm test`.
 
-## T4 — Blob data API (read / write + version guard)  → **CP-A**
-- [ ] `GET /api/data` reads dataset.json from Vercel Blob (seeds from `dataset.seed.json` if absent)
-- [ ] `PUT /api/data` writes; rejects if client `version` < server `version`; bumps version on success
-- [ ] Local dev fallback (filesystem or Blob token via `.env.local`)
+## T4 — Blob data API (read / write + version guard)  ✅  → **CP-A**
+- [x] `GET /api/data` reads dataset (seeds from `dataset.seed.json` if absent)
+- [x] `PUT /api/data` writes; rejects mismatched `version` with 409 + current data; bumps version on success
+- [x] Pluggable storage: local-file backend for dev, Vercel Blob when `BLOB_READ_WRITE_TOKEN` is set
+- [x] dataStore version-guard unit tests (in-memory storage); 5 tests
 
-**Acceptance:** GET returns seeded dataset; PUT with stale version is rejected with a clear conflict response; PUT with current version succeeds and increments version.
-**Verify:** curl/REST client round-trip; stale-version rejection test.
+**Acceptance:** ✅ GET → seeded v1 (52 meetings); PUT current → 200 bump to v2; PUT stale → 409 with current; re-GET → persisted v2.
+**Verify:** ✅ live server round-trip (curl) + unit tests.
 **🛑 CHECKPOINT A:** review seed correctness + de-dup map + API round-trip before UI.
 
 ## T5 — Load + Section grid view (thin vertical slice)  → **CP-B**

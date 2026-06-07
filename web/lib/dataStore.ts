@@ -1,0 +1,33 @@
+import type { Storage } from "./storage";
+import type { Dataset } from "./types";
+import seedJson from "../data/dataset.seed.json";
+
+const seed = seedJson as unknown as Dataset;
+
+/** Read the dataset, seeding storage from the bundled seed on first use. */
+export async function getDataset(storage: Storage): Promise<Dataset> {
+  const existing = await storage.read();
+  if (existing) return existing;
+  await storage.write(seed);
+  return seed;
+}
+
+export type SaveResult =
+  | { ok: true; dataset: Dataset }
+  | { ok: false; conflict: true; current: Dataset };
+
+/**
+ * Optimistic-concurrency save. The incoming dataset carries the version the client
+ * loaded; if the server has moved on, reject with the current data so the client can
+ * re-fetch and re-apply. On success, persist with an incremented version.
+ */
+export async function saveDataset(storage: Storage, incoming: Dataset): Promise<SaveResult> {
+  const current = await storage.read();
+  if (current && incoming.version !== current.version) {
+    return { ok: false, conflict: true, current };
+  }
+  const base = current?.version ?? incoming.version;
+  const next: Dataset = { ...incoming, version: base + 1 };
+  await storage.write(next);
+  return { ok: true, dataset: next };
+}

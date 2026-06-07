@@ -4,6 +4,9 @@ web/.next/
 web/out/
 web/next-env.d.ts
 
+# Local dev datastore (Blob fallback)
+web/data/dataset.local.json
+
 # Env
 .env
 .env.local
