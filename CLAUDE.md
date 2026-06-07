@@ -4,58 +4,76 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Thai university timetable parser. It reads schedule PDFs (e.g., `CE6541-01.pdf`) exported from a TMS (Timetable Management System) and extracts structured course/schedule data into CSV format.
+TMS is a Thai-language timetable viewer/editor for the Computer Engineering department —
+the first phase before an automated scheduling system. It displays the weekly schedule from
+three angles (Section / Instructor / Room), highlights conflicts, supports CRUD on all master
+data, and prints a per-Section schedule sheet matching the original PDF. Data lives as one JSON
+document in Vercel Blob (no database). See [CONTEXT.md](CONTEXT.md) for the domain glossary and
+[docs/adr/0001](docs/adr/0001-vercel-blob-as-json-store.md) for the storage decision.
 
-**Dependency:** `pdfplumber` — install with `pip install pdfplumber`.
+## Layout
+
+- `web/` — the Next.js 16 (App Router) + TypeScript + Tailwind app. **All app commands run here.**
+- `seed_json.py` — re-parses `example/*.pdf` (pdfplumber) into `web/data/dataset.seed.json`.
+- `example/` — source schedule PDFs + the original (flawed, day-less) `combined_courses.csv`.
+- `tasks/` — `plan.md` and `todo.md` (phase-1 task breakdown and status).
 
 ## Commands
 
 ```bash
-# Run the main pipeline (parses all PDFs in example/ → combined_courses.csv)
-python generate_csv.py
+# App (run inside web/)
+cd web
+npm run dev      # dev server
+npm run build    # production build (also typechecks)
+npm test         # vitest run (all tests)
+npx vitest run lib/conflicts.test.ts   # single test file
+npx vitest -t "co-teaching"            # tests matching a name
 
-# Run exploratory/debug scripts on a single PDF
-python extract_tables.py
-python test_parse.py
-python analyze_boxes.py
-python extract_cells.py
+# Regenerate seed data from the PDFs (repo root; needs: pip install pdfplumber)
+python seed_json.py
 ```
+
+The preview/dev server is configured in `.claude/launch.json` (port 3000).
 
 ## Architecture
 
-The pipeline has two stages per PDF:
+### Data model (`web/lib/types.ts`)
+One `Dataset` JSON document: `sections`, `courses`, `instructors`, `rooms`, `meetings`, plus a
+numeric `version` for optimistic concurrency. Key relationships:
+- **Section** (CE6541) = student group, owns `headcount`.
+- **Course** (EN-code) belongs to a Section; carries name, theory/practical hours, and instructor(s).
+- **Meeting** = one timetable block: references a `courseId` + `roomId` + one `day` (MON–FRI) +
+  integer `start`/`end` hours (8–22). Section and instructors are derived *through the Course*.
 
-### Stage 1 — Course metadata (top table)
-`page.extract_tables()[0]` returns the course listing table at the top of each page. Rows are matched by regex `(EN-[0-9A-Z\-]+|[0-9]{8})` at column 6. Fixed column offsets extract instructor (col 20), theory hours (col 17), and practical hours (col 18).
+### Conflict engine (`web/lib/conflicts.ts`) — the core logic, fully unit-tested
+`detectConflicts(meetings, dataset, view)` returns the set of conflicting meeting ids. Overlap =
+same day + intersecting hours. Two exceptions are NOT conflicts:
+- **Room view**: a shared room is fine when the combined headcount of the two sections ≤ room capacity.
+- **Instructor view**: overlap is fine when the meetings are the **same subject (Course code)** —
+  co-teaching, or one combined class taught to two sections at once. (Note: keyed on course *code*,
+  not the per-section `courseId`.)
 
-### Stage 2 — Schedule blocks (spatial geometry)
-`page.find_tables()[0].cells` returns raw bounding boxes. Each cell is cropped and text-searched for `EN-` course codes. Time-of-day is computed from the cell's `x0` coordinate using a hardcoded pixel-to-hour formula:
+### Storage + concurrency (`web/lib/storage.ts`, `dataStore.ts`, `api.ts`, `app/api/data/route.ts`)
+- `GET/PUT /api/data` over a pluggable `Storage`: a local JSON file in dev, Vercel Blob when
+  `BLOB_READ_WRITE_TOKEN` is set. First read seeds from `dataset.seed.json`.
+- **Version guard**: `PUT` rejects (409) if the client `version` ≠ server version, returning the
+  current data. The client (`persistDataset`) then re-applies its diff (`lib/ops.ts`
+  `diffDataset`/`applyOps`) onto the server's latest and retries — concurrent edits aren't lost.
 
-```python
-start_hour = 8 + round((x0 - 69.13) / 54.14)
-duration   = round((x1 - x0) / 54.14)
-```
+### UI (`web/app`, `web/components`)
+- `/` — timetable view with a Section/Instructor/Room toggle + entity selector; deep-linkable via
+  `?view=&id=`. `Timetable.tsx` renders the day×hour grid; `lib/layout.ts` `assignLanes` stacks
+  overlapping blocks. `lib/select.ts` holds the view dispatch (`entitiesFor`/`meetingsFor`).
+- `/overview` — colored small-multiples (`MiniTimetable.tsx`); tiles deep-link to the detail view.
+- `/masters` — tabbed inline CRUD for all entities + a sticky Save bar (diff-based).
+- `/sheet` — printable per-Section sheet (course table + grid); `@media print` + `.no-print`.
 
-Day-of-week is resolved by matching the cell's `top` Y-coordinate against the Y positions of Thai day labels (`จันทร์`…`อาทิตย์`) found in the left margin (x0 < 100).
+## Conventions
 
-Adjacent cells for the same course on the same day are merged by contiguous-interval logic before writing output.
-
-### Output schema (CSV, UTF-8 BOM)
-| Column | Meaning |
-|---|---|
-| รหัสห้องเรียน | Class group (from filename prefix, e.g. `CE6541`) |
-| อาจารย์ผู้สอน | Instructor name |
-| จำนวนชมที่สอน (ท + ป) | Total contact hours (theory + practical) |
-| เวลาเริ่มสอน | Start hour (e.g. `8.00`) |
-| เวลาสิ้นสุดสอน | End hour |
-| ชื่อห้องสอน | Room name |
-
-## Key assumptions baked into the pixel math
-
-- Schedule grid starts at `x0 = 69.13` px
-- Each hour slot is `54.14` px wide
-- First slot = 08:00
-- Day label cells have `x0 < 100`
-- Schedule rows begin after the first day label's Y coordinate minus 20 px
-
-If PDFs from a different term or printer have different layout metrics, these constants must be recalibrated using `analyze_boxes.py` and `extract_cells.py`.
+- UI text is Thai. The viewer/editor is the source of truth at runtime; `combined_courses.csv` is
+  legacy and known-flawed (missing the day column) — don't treat it as canonical.
+- `web/AGENTS.md` warns that this Next.js major version differs from older docs; check
+  `node_modules/next/dist/docs/` before using unfamiliar Next APIs.
+- Seed room names are truncated in the source PDFs; `seed_json.py` completes known suffixes and
+  prefers the least-wrapped variant. Section headcounts are a temporary uniform 20 (see CP-A note
+  in `tasks/todo.md`).
