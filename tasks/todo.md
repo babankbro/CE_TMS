@@ -5,15 +5,16 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 
 ---
 
-## T1 — Seed: CSV → JSON with days + de-duplication
-- [ ] Extend `generate_csv.py` (or a new `seed_json.py`) to also emit `day` (re-parse already reads จันทร์–ศุกร์)
-- [ ] Build master lists: de-duplicate Room names (handle truncated "…ระบบอัตโ") and Instructor names into id'd records
-- [ ] Split combined instructor cells ("A ,B") into multiple `instructorIds` (co-teaching)
-- [ ] Emit `data/dataset.seed.json` matching the Dataset schema; `headcount` default 0, room `capacity` default 35, `version` = 1
-- [ ] Write `data/dedup-map.md` listing how raw room/instructor strings collapsed (for human review)
+## T1 — Seed: PDF → JSON with days + de-duplication  ✅
+- [x] `seed_json.py` re-parses PDFs and emits `day` (MON–FRI) per meeting
+- [x] Master lists: de-duplicated Rooms (truncated variants collapsed by whitespace-stripped key) and Instructors (from clean top table)
+- [x] Combined instructor cells ("A ,B") split into multiple `instructorIds` (2 co-taught courses)
+- [x] `web/data/dataset.seed.json` (6 sections, 35 courses, 12 instructors, 10 rooms, 52 meetings); headcount 0, capacity 35, version 1
+- [x] `web/data/dedup-map.md` for human review
+- [ ] **CP-A review:** room names are truncated in source (e.g. "…ระบบอัตโ"); confirm/rename at checkpoint. Headcounts default 0.
 
-**Acceptance:** seed JSON parses; every meeting has a day in MON–FRI; no duplicate rooms/instructors by normalized name; co-taught cells produce multiple instructorIds.
-**Verify:** load JSON in a scratch script, assert counts and that all `roomId`/`instructorIds`/`sectionId` resolve.
+**Acceptance:** ✅ JSON parses; 0 ref/day/time errors; no duplicate rooms/instructors; co-taught cells → multiple instructorIds.
+**Verify:** integrity script — all refs resolve, all days MON–FRI, all times 8–22.
 
 ## T2 — Next.js skeleton  ✅
 - [x] `create-next-app` (App Router, TypeScript, Tailwind) in `web/`, Thai-default UI, deploys to Vercel

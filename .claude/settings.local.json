@@ -15,7 +15,9 @@
       "Bash(npm test *)",
       "Bash(python -m ensurepip --upgrade)",
       "Bash(python -m pip --version)",
-      "Bash(python -m pip install pdfplumber)"
+      "Bash(python -m pip install pdfplumber)",
+      "Bash(python seed_json.py)",
+      "Bash(git add *)"
     ]
   }
 }

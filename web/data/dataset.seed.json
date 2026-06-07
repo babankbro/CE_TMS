@@ -1,0 +1,950 @@
+{
+  "version": 1,
+  "sections": [
+    {
+      "id": "ce6541",
+      "code": "CE6541",
+      "name": "CE6541",
+      "headcount": 0
+    },
+    {
+      "id": "ce6641",
+      "code": "CE6641",
+      "name": "CE6641",
+      "headcount": 0
+    },
+    {
+      "id": "ce6721",
+      "code": "CE6721",
+      "name": "CE6721",
+      "headcount": 0
+    },
+    {
+      "id": "ce6741",
+      "code": "CE6741",
+      "name": "CE6741",
+      "headcount": 0
+    },
+    {
+      "id": "ce6821",
+      "code": "CE6821",
+      "name": "CE6821",
+      "headcount": 0
+    },
+    {
+      "id": "ce6841",
+      "code": "CE6841",
+      "name": "CE6841",
+      "headcount": 0
+    }
+  ],
+  "courses": [
+    {
+      "id": "ce6541__EN-001-016",
+      "code": "EN-001-016",
+      "name": "การเขียนโปรแกรมและแก้ปัญหา",
+      "sectionId": "ce6541",
+      "theoryHours": 1,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6541__EN-012-314",
+      "code": "EN-012-314",
+      "name": "ปัญญาประดิษฐ์",
+      "sectionId": "ce6541",
+      "theoryHours": 3,
+      "practicalHours": 0,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6541__EN-013-336",
+      "code": "EN-013-336",
+      "name": "การวิเคราะห์และออกแบบระบบสารสนเทศ",
+      "sectionId": "ce6541",
+      "theoryHours": 3,
+      "practicalHours": 0,
+      "instructorIds": [
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6541__EN-013-338",
+      "code": "EN-013-338",
+      "name": "การออกแบบการปฎิสัมพันธ์และประสบการณ์ของผู้ใช้",
+      "sectionId": "ce6541",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i3"
+      ]
+    },
+    {
+      "id": "ce6541__EN-015-420",
+      "code": "EN-015-420",
+      "name": "สหกิจศึกษา",
+      "sectionId": "ce6541",
+      "theoryHours": 0,
+      "practicalHours": 40,
+      "instructorIds": [
+        "i4"
+      ]
+    },
+    {
+      "id": "ce6641__EN-001-016",
+      "code": "EN-001-016",
+      "name": "ระบบควบคุมอัตโนมัต",
+      "sectionId": "ce6641",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i5"
+      ]
+    },
+    {
+      "id": "ce6641__EN-012-314",
+      "code": "EN-012-314",
+      "name": "ปัญญาประดิษฐ์",
+      "sectionId": "ce6641",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6641__EN-012-317",
+      "code": "EN-012-317",
+      "name": "โครงงานวิศวกรรมคอมพิวเตอร์ 3",
+      "sectionId": "ce6641",
+      "theoryHours": 0,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i6"
+      ]
+    },
+    {
+      "id": "ce6641__EN-013-308",
+      "code": "EN-013-308",
+      "name": "อินเทอร์เน็ตของสรรพสิ่ง",
+      "sectionId": "ce6641",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i7"
+      ]
+    },
+    {
+      "id": "ce6641__EN-013-331",
+      "code": "EN-013-331",
+      "name": "การพัฒนาแอปพลิเคชันบนอุปกรณ์เคลื่อนที่",
+      "sectionId": "ce6641",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i3"
+      ]
+    },
+    {
+      "id": "ce6641__EN-013-338",
+      "code": "EN-013-338",
+      "name": "การออกแบบการปฎิสัมพันธ์และประสบการณ์ของผู้ใช้",
+      "sectionId": "ce6641",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i3"
+      ]
+    },
+    {
+      "id": "ce6721__EN-001-007",
+      "code": "EN-001-007",
+      "name": "ความน่าจะเป็นและสถิติวิศวกรรม",
+      "sectionId": "ce6721",
+      "theoryHours": 3,
+      "practicalHours": 0,
+      "instructorIds": [
+        "i8"
+      ]
+    },
+    {
+      "id": "ce6721__EN-012-103",
+      "code": "EN-012-103",
+      "name": "การสื่อสารข้อมูลและเครือข่ายคอมพิวเตอร์",
+      "sectionId": "ce6721",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i9"
+      ]
+    },
+    {
+      "id": "ce6721__EN-012-314",
+      "code": "EN-012-314",
+      "name": "ปัญญาประดิษฐ์",
+      "sectionId": "ce6721",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6721__EN-012-315",
+      "code": "EN-012-315",
+      "name": "วิศวกรรมซอฟต์แวร์",
+      "sectionId": "ce6721",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i4"
+      ]
+    },
+    {
+      "id": "ce6721__EN-012-316",
+      "code": "EN-012-316",
+      "name": "วิทยาการข้อมูลและการแสดงผลข้อมูล",
+      "sectionId": "ce6721",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i3"
+      ]
+    },
+    {
+      "id": "ce6721__EN-012-318",
+      "code": "EN-012-318",
+      "name": "โครงงานวิศวกรรมคอมพิวเตอร์ 4",
+      "sectionId": "ce6721",
+      "theoryHours": 0,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i6"
+      ]
+    },
+    {
+      "id": "ce6721__EN-013-336",
+      "code": "EN-013-336",
+      "name": "การวิเคราะห์และออกแบบระบบสารสนเทศ",
+      "sectionId": "ce6721",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6721__EN-015-319",
+      "code": "EN-015-319",
+      "name": "การเตรียมสหกิจศึกษา",
+      "sectionId": "ce6721",
+      "theoryHours": 0,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i3"
+      ]
+    },
+    {
+      "id": "ce6741__EN-001-007",
+      "code": "EN-001-007",
+      "name": "ความน่าจะเป็นและสถิติวิศวกรรม",
+      "sectionId": "ce6741",
+      "theoryHours": 3,
+      "practicalHours": 0,
+      "instructorIds": [
+        "i8"
+      ]
+    },
+    {
+      "id": "ce6741__EN-001-020",
+      "code": "EN-001-020",
+      "name": "การเขียนโปรแกรมและแก้ปัญหา",
+      "sectionId": "ce6741",
+      "theoryHours": 1,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6741__EN-012-205",
+      "code": "EN-012-205",
+      "name": "โครงสร้างข้อมูลและอัลกอริทึม",
+      "sectionId": "ce6741",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6741__EN-012-208",
+      "code": "EN-012-208",
+      "name": "ระบบปฏิบัติการและโปรแกรมระบบ",
+      "sectionId": "ce6741",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i10"
+      ]
+    },
+    {
+      "id": "ce6741__EN-012-210",
+      "code": "EN-012-210",
+      "name": "ระบบสมองกลฝังตัว",
+      "sectionId": "ce6741",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i6"
+      ]
+    },
+    {
+      "id": "ce6741__EN-012-211",
+      "code": "EN-012-211",
+      "name": "โครงงานวิศวกรรมคอมพิวเตอร์ 1",
+      "sectionId": "ce6741",
+      "theoryHours": 0,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6821__EN-001-001",
+      "code": "EN-001-001",
+      "name": "การเขียนแบบวิศวกรรม",
+      "sectionId": "ce6821",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i11"
+      ]
+    },
+    {
+      "id": "ce6821__EN-001-006",
+      "code": "EN-001-006",
+      "name": "วิศวกรรมไฟฟ้าพื้นฐาน",
+      "sectionId": "ce6821",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i12"
+      ]
+    },
+    {
+      "id": "ce6821__EN-001-019",
+      "code": "EN-001-019",
+      "name": "แก่นวิศวกรรมคอมพิวเตอร์",
+      "sectionId": "ce6821",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1",
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6821__EN-001-020",
+      "code": "EN-001-020",
+      "name": "การเขียนโปรแกรมและแก้ปัญหา",
+      "sectionId": "ce6821",
+      "theoryHours": 1,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1"
+      ]
+    },
+    {
+      "id": "ce6821__EN-012-104",
+      "code": "EN-012-104",
+      "name": "การสัมมนาทางวิศวกรรมคอมพิวเตอร์",
+      "sectionId": "ce6821",
+      "theoryHours": 0,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i10"
+      ]
+    },
+    {
+      "id": "ce6821__EN-012-205",
+      "code": "EN-012-205",
+      "name": "โครงสร้างข้อมูลและอัลกอริทึม",
+      "sectionId": "ce6821",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6841__EN-001-001",
+      "code": "EN-001-001",
+      "name": "การเขียนแบบวิศวกรรม",
+      "sectionId": "ce6841",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i11"
+      ]
+    },
+    {
+      "id": "ce6841__EN-001-006",
+      "code": "EN-001-006",
+      "name": "วิศวกรรมไฟฟ้าพื้นฐาน",
+      "sectionId": "ce6841",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i12"
+      ]
+    },
+    {
+      "id": "ce6841__EN-001-019",
+      "code": "EN-001-019",
+      "name": "แก่นวิศวกรรมคอมพิวเตอร์",
+      "sectionId": "ce6841",
+      "theoryHours": 2,
+      "practicalHours": 2,
+      "instructorIds": [
+        "i1",
+        "i2"
+      ]
+    },
+    {
+      "id": "ce6841__EN-012-207",
+      "code": "EN-012-207",
+      "name": "ตรรกศาสตร์ของดิจิตอลคอมพิวเตอร์",
+      "sectionId": "ce6841",
+      "theoryHours": 2,
+      "practicalHours": 3,
+      "instructorIds": [
+        "i9"
+      ]
+    }
+  ],
+  "instructors": [
+    {
+      "id": "i1",
+      "name": "อ.สรายุทธ กรวิรัตน์"
+    },
+    {
+      "id": "i2",
+      "name": "อ.อัจฉรา ชุมพล"
+    },
+    {
+      "id": "i3",
+      "name": "อ.ธนกร ญานกาย"
+    },
+    {
+      "id": "i4",
+      "name": "อ.วรพจน์ สมมูล"
+    },
+    {
+      "id": "i5",
+      "name": "อ.ศิวณุ เหล่าบุตรสา"
+    },
+    {
+      "id": "i6",
+      "name": "อ.รณชัย สังหมื่นเม้า"
+    },
+    {
+      "id": "i7",
+      "name": "อ.อุ้มบุญ เชลียงรัชต์ชัย"
+    },
+    {
+      "id": "i8",
+      "name": "อ.สวลี อุตรา"
+    },
+    {
+      "id": "i9",
+      "name": "อ.ภูริ จันทิมา"
+    },
+    {
+      "id": "i10",
+      "name": "อ.กำธร สารวรรณ"
+    },
+    {
+      "id": "i11",
+      "name": "อ.อนุวัฒน์ ภาชนะวรรณ์"
+    },
+    {
+      "id": "i12",
+      "name": "อ.สรายุทธ ฐิตะภาส"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "r1",
+      "name": "ปัญญาประดิษฐ์ประยุก ต์ อาคารโรงงานสาขาวิชา วิศวกรรมคอมพิวเตอร์แ ละระบบอัตโ",
+      "capacity": 35
+    },
+    {
+      "id": "r2",
+      "name": "ห้องปฏิบัติการฝึกอบรม อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโ",
+      "capacity": 35
+    },
+    {
+      "id": "r3",
+      "name": "ห้อง working space อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโ",
+      "capacity": 35
+    },
+    {
+      "id": "r4",
+      "name": "ห้องปฏิบัติการระบบเครือข่าย อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และ ระบบอัตโ",
+      "capacity": 35
+    },
+    {
+      "id": "r5",
+      "name": "1444 อาคารเรียนและปฏิบัติการเครื่องกล(อาคาร 14)",
+      "capacity": 35
+    },
+    {
+      "id": "r6",
+      "name": "นวัตกรรมระบบอัจฉริยะ อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโ",
+      "capacity": 35
+    },
+    {
+      "id": "r7",
+      "name": "411 อาคาร 4",
+      "capacity": 35
+    },
+    {
+      "id": "r8",
+      "name": "EN0122 อาคารปฏิบัติการกลางคณะวิศวกรรมศาสตร์และเทคโนโลยีอุ",
+      "capacity": 35
+    },
+    {
+      "id": "r9",
+      "name": "115 อาคาร 1",
+      "capacity": 35
+    },
+    {
+      "id": "r10",
+      "name": "321 (ห้องปฏิบัติการ CAD/CAM 1) อาคาร 3",
+      "capacity": 35
+    }
+  ],
+  "meetings": [
+    {
+      "id": "m1",
+      "courseId": "ce6541__EN-001-016",
+      "roomId": "r1",
+      "day": "MON",
+      "start": 9,
+      "end": 11
+    },
+    {
+      "id": "m2",
+      "courseId": "ce6541__EN-012-314",
+      "roomId": "r1",
+      "day": "MON",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m3",
+      "courseId": "ce6541__EN-013-336",
+      "roomId": "r2",
+      "day": "WED",
+      "start": 9,
+      "end": 10
+    },
+    {
+      "id": "m4",
+      "courseId": "ce6541__EN-013-338",
+      "roomId": "r2",
+      "day": "FRI",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m5",
+      "courseId": "ce6541__EN-013-338",
+      "roomId": "r2",
+      "day": "FRI",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m6",
+      "courseId": "ce6541__EN-015-420",
+      "roomId": "r3",
+      "day": "FRI",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m7",
+      "courseId": "ce6641__EN-013-331",
+      "roomId": "r2",
+      "day": "MON",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m8",
+      "courseId": "ce6641__EN-013-331",
+      "roomId": "r2",
+      "day": "MON",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m9",
+      "courseId": "ce6641__EN-013-308",
+      "roomId": "r4",
+      "day": "MON",
+      "start": 17,
+      "end": 18
+    },
+    {
+      "id": "m10",
+      "courseId": "ce6641__EN-013-308",
+      "roomId": "r4",
+      "day": "MON",
+      "start": 19,
+      "end": 20
+    },
+    {
+      "id": "m11",
+      "courseId": "ce6641__EN-001-016",
+      "roomId": "r5",
+      "day": "WED",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m12",
+      "courseId": "ce6641__EN-001-016",
+      "roomId": "r5",
+      "day": "WED",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m13",
+      "courseId": "ce6641__EN-012-317",
+      "roomId": "r6",
+      "day": "THU",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m14",
+      "courseId": "ce6641__EN-013-338",
+      "roomId": "r2",
+      "day": "FRI",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m15",
+      "courseId": "ce6641__EN-013-338",
+      "roomId": "r2",
+      "day": "FRI",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m16",
+      "courseId": "ce6641__EN-012-314",
+      "roomId": "r4",
+      "day": "FRI",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m17",
+      "courseId": "ce6721__EN-001-007",
+      "roomId": "r7",
+      "day": "MON",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m18",
+      "courseId": "ce6721__EN-012-316",
+      "roomId": "r2",
+      "day": "TUE",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m19",
+      "courseId": "ce6721__EN-012-315",
+      "roomId": "r6",
+      "day": "TUE",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m20",
+      "courseId": "ce6721__EN-013-336",
+      "roomId": "r8",
+      "day": "WED",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m21",
+      "courseId": "ce6721__EN-012-318",
+      "roomId": "r4",
+      "day": "THU",
+      "start": 9,
+      "end": 10
+    },
+    {
+      "id": "m22",
+      "courseId": "ce6721__EN-015-319",
+      "roomId": "r4",
+      "day": "THU",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m23",
+      "courseId": "ce6721__EN-012-103",
+      "roomId": "r1",
+      "day": "THU",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "id": "m24",
+      "courseId": "ce6721__EN-012-103",
+      "roomId": "r1",
+      "day": "THU",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "id": "m25",
+      "courseId": "ce6721__EN-012-314",
+      "roomId": "r4",
+      "day": "FRI",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m26",
+      "courseId": "ce6741__EN-012-210",
+      "roomId": "r6",
+      "day": "MON",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m27",
+      "courseId": "ce6741__EN-012-210",
+      "roomId": "r6",
+      "day": "MON",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m28",
+      "courseId": "ce6741__EN-001-007",
+      "roomId": "r7",
+      "day": "MON",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m29",
+      "courseId": "ce6741__EN-012-210",
+      "roomId": "r6",
+      "day": "TUE",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m30",
+      "courseId": "ce6741__EN-012-208",
+      "roomId": "r6",
+      "day": "TUE",
+      "start": 9,
+      "end": 10
+    },
+    {
+      "id": "m31",
+      "courseId": "ce6741__EN-012-211",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m32",
+      "courseId": "ce6741__EN-001-020",
+      "roomId": "r4",
+      "day": "THU",
+      "start": 8,
+      "end": 10
+    },
+    {
+      "id": "m33",
+      "courseId": "ce6821__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m34",
+      "courseId": "ce6821__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m35",
+      "courseId": "ce6821__EN-012-104",
+      "roomId": "r4",
+      "day": "MON",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "id": "m36",
+      "courseId": "ce6821__EN-001-019",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m37",
+      "courseId": "ce6821__EN-001-019",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m38",
+      "courseId": "ce6821__EN-001-006",
+      "roomId": "r9",
+      "day": "TUE",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "id": "m39",
+      "courseId": "ce6821__EN-001-001",
+      "roomId": "r10",
+      "day": "WED",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m40",
+      "courseId": "ce6821__EN-001-001",
+      "roomId": "r10",
+      "day": "WED",
+      "start": 15,
+      "end": 16
+    },
+    {
+      "id": "m41",
+      "courseId": "ce6821__EN-001-020",
+      "roomId": "r4",
+      "day": "THU",
+      "start": 8,
+      "end": 10
+    },
+    {
+      "id": "m42",
+      "courseId": "ce6821__EN-012-205",
+      "roomId": "r8",
+      "day": "FRI",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m43",
+      "courseId": "ce6821__EN-012-205",
+      "roomId": "r8",
+      "day": "FRI",
+      "start": 15,
+      "end": 16
+    },
+    {
+      "id": "m44",
+      "courseId": "ce6841__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m45",
+      "courseId": "ce6841__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m46",
+      "courseId": "ce6841__EN-012-207",
+      "roomId": "r2",
+      "day": "MON",
+      "start": 17,
+      "end": 18
+    },
+    {
+      "id": "m47",
+      "courseId": "ce6841__EN-001-019",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 8,
+      "end": 9
+    },
+    {
+      "id": "m48",
+      "courseId": "ce6841__EN-001-019",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 10,
+      "end": 11
+    },
+    {
+      "id": "m49",
+      "courseId": "ce6841__EN-001-006",
+      "roomId": "r9",
+      "day": "TUE",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "id": "m50",
+      "courseId": "ce6841__EN-012-207",
+      "roomId": "r2",
+      "day": "TUE",
+      "start": 18,
+      "end": 19
+    },
+    {
+      "id": "m51",
+      "courseId": "ce6841__EN-001-001",
+      "roomId": "r10",
+      "day": "WED",
+      "start": 13,
+      "end": 14
+    },
+    {
+      "id": "m52",
+      "courseId": "ce6841__EN-001-001",
+      "roomId": "r10",
+      "day": "WED",
+      "start": 15,
+      "end": 16
+    }
+  ]
+}
