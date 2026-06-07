@@ -22,10 +22,10 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 **Acceptance:** `npm run dev` serves a Thai shell page; `npm run build` passes.
 **Verify:** local dev render + clean build.
 
-## T3 — Domain types + conflict engine (TDD)
-- [ ] `lib/types.ts` — Dataset, Section, Instructor, Room, Meeting, Day
-- [ ] `lib/conflicts.ts` — `detectConflicts(meetings, dataset, viewKind)` pure function
-- [ ] Unit tests covering: plain overlap; shared-room within capacity (no conflict); shared-room over capacity (conflict); co-teaching overlap (no conflict); non-overlap adjacency
+## T3 — Domain types + conflict engine (TDD)  ✅
+- [x] `lib/types.ts` — Dataset, Section, Instructor, Room, Meeting, Day
+- [x] `lib/conflicts.ts` — `detectConflicts(meetings, dataset, viewKind)` pure function
+- [x] Unit tests (10) covering: plain overlap; adjacency; cross-day; shared-room within/over capacity; co-teaching overlap; instructor double-book
 
 **Acceptance:** all conflict unit tests pass, including both exceptions.
 **Verify:** `npm test`.

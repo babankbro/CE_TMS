@@ -9,7 +9,10 @@
       "Bash(git init *)",
       "Bash(node -e \"console.log\\('checking create-next-app availability'\\)\")",
       "Bash(npx --yes create-next-app@latest web --ts --tailwind --app --eslint --no-src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(npm install *)",
+      "Bash(npm test *)"
     ]
   }
 }
