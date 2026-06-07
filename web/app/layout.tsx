@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="th" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
-        <header className="border-b border-zinc-200 bg-white">
+        <header className="no-print border-b border-zinc-200 bg-white">
           <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
             <span className="font-semibold">ระบบตารางเรียนตารางสอน</span>
             <nav className="flex gap-4 text-sm text-zinc-600">

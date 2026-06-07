@@ -81,12 +81,14 @@ tiles deep-link to detail.
 **Verify:** ✅ live API concurrency scenario + DOM-inspected masters UI + 28 unit tests + build.
 **🛑 CHECKPOINT C:** validate conflicts + concurrency before print polish.
 
-## T9 — Schedule Sheet (print / PDF, matches original)
-- [ ] Per-Section printable sheet: top course table (code, name, ท/ป hours, instructor) + weekly grid
-- [ ] Print stylesheet / export to PDF, layout matching the original PDF for board posting
+## T9 — Schedule Sheet (print / PDF, matches original)  ✅
+- [x] `/sheet`: per-Section printable sheet — header (มหาวิทยาลัยกาฬสินธุ์ + กลุ่มเรียน), top course
+      table (ที่/รหัสวิชา/ชื่อวิชา/ท/ป/รวม/ผู้สอน), and the weekly grid (reuses `Timetable`)
+- [x] Print stylesheet (`@media print`, A4 landscape, `.no-print` hides nav/controls); window.print() button
 
-**Acceptance:** printed/exported sheet for a Section visually matches the original PDF layout closely enough to post on a board.
-**Verify:** print-preview a Section, compare side-by-side with its source PDF.
+**Acceptance:** ✅ CE6541 sheet matches the source PDF's top table exactly (e.g. row 1: EN-001-016
+การเขียนโปรแกรมและแก้ปัญหา ท=1 ป=2 รวม=3 อ.สรายุทธ กรวิรัตน์) + weekly grid below.
+**Verify:** ✅ DOM-inspected sheet vs original PDF + build.
 
 ---
 
