@@ -113,6 +113,30 @@ export default function MastersPage() {
     }
   }
 
+  async function onClear() {
+    if (!window.confirm("ล้างข้อมูลทั้งหมดให้ว่างเปล่า? (เริ่มสร้างตารางใหม่จากศูนย์)")) return;
+    setSaving(true);
+    setNotice(null);
+    try {
+      const empty: Dataset = {
+        version: 0,
+        sections: [],
+        courses: [],
+        instructors: [],
+        rooms: [],
+        meetings: [],
+      };
+      const saved = await replaceDataset(empty);
+      setBaseline(saved);
+      setDraft(structuredClone(saved));
+      setNotice("ล้างข้อมูลแล้ว");
+    } catch (err) {
+      setNotice((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function onReset() {
     if (!window.confirm("รีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น? การแก้ไขทั้งหมดในระบบจะหายไป")) return;
     setSaving(true);
@@ -160,8 +184,11 @@ export default function MastersPage() {
             นำเข้า JSON
             <input type="file" accept="application/json,.json" onChange={onImportFile} className="hidden" />
           </label>
-          <button onClick={onReset} className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
-            รีเซ็ต
+          <button onClick={onReset} className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50">
+            รีเซ็ตค่าตั้งต้น
+          </button>
+          <button onClick={onClear} className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+            ล้างข้อมูล
           </button>
         </div>
       </div>
