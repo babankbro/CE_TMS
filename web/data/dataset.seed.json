@@ -480,12 +480,12 @@
   "rooms": [
     {
       "id": "r1",
-      "name": "ปัญญาประดิษฐ์ประยุกต์ อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
+      "name": "ห้องปฏิบัติการฝึกอบรม อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
       "capacity": 35
     },
     {
       "id": "r2",
-      "name": "ห้องปฏิบัติการฝึกอบรม อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
+      "name": "ปัญญาประดิษฐ์ประยุกต์ อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
       "capacity": 35
     },
     {
@@ -495,17 +495,17 @@
     },
     {
       "id": "r4",
-      "name": "ห้องปฏิบัติการระบบเครือข่าย อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
-      "capacity": 35
-    },
-    {
-      "id": "r5",
       "name": "1444 อาคารเรียนและปฏิบัติการเครื่องกล(อาคาร 14)",
       "capacity": 35
     },
     {
-      "id": "r6",
+      "id": "r5",
       "name": "นวัตกรรมระบบอัจฉริยะ อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
+      "capacity": 35
+    },
+    {
+      "id": "r6",
+      "name": "ห้องปฏิบัติการระบบเครือข่าย อาคารโรงงานสาขาวิชาวิศวกรรมคอมพิวเตอร์และระบบอัตโนมัติ",
       "capacity": 35
     },
     {
@@ -532,390 +532,286 @@
   "meetings": [
     {
       "id": "m1",
-      "courseId": "ce6541__EN-001-016",
+      "courseId": "ce6541__EN-013-338",
       "roomId": "r1",
-      "day": "MON",
-      "start": 9,
-      "end": 11
+      "day": "FRI",
+      "start": 8,
+      "end": 12
     },
     {
       "id": "m2",
-      "courseId": "ce6541__EN-012-314",
-      "roomId": "r1",
+      "courseId": "ce6541__EN-001-016",
+      "roomId": "r2",
       "day": "MON",
-      "start": 13,
-      "end": 14
+      "start": 9,
+      "end": 12
     },
     {
       "id": "m3",
       "courseId": "ce6541__EN-013-336",
-      "roomId": "r2",
+      "roomId": "r1",
       "day": "WED",
       "start": 9,
-      "end": 10
+      "end": 12
     },
     {
       "id": "m4",
-      "courseId": "ce6541__EN-013-338",
+      "courseId": "ce6541__EN-012-314",
       "roomId": "r2",
-      "day": "FRI",
-      "start": 8,
-      "end": 9
+      "day": "MON",
+      "start": 13,
+      "end": 16
     },
     {
       "id": "m5",
-      "courseId": "ce6541__EN-013-338",
-      "roomId": "r2",
-      "day": "FRI",
-      "start": 10,
-      "end": 11
-    },
-    {
-      "id": "m6",
       "courseId": "ce6541__EN-015-420",
       "roomId": "r3",
       "day": "FRI",
       "start": 13,
-      "end": 14
+      "end": 19
+    },
+    {
+      "id": "m6",
+      "courseId": "ce6641__EN-013-331",
+      "roomId": "r1",
+      "day": "MON",
+      "start": 8,
+      "end": 12
     },
     {
       "id": "m7",
-      "courseId": "ce6641__EN-013-331",
-      "roomId": "r2",
-      "day": "MON",
+      "courseId": "ce6641__EN-001-016",
+      "roomId": "r4",
+      "day": "WED",
       "start": 8,
-      "end": 9
+      "end": 12
     },
     {
       "id": "m8",
-      "courseId": "ce6641__EN-013-331",
-      "roomId": "r2",
-      "day": "MON",
-      "start": 10,
-      "end": 11
+      "courseId": "ce6641__EN-013-338",
+      "roomId": "r1",
+      "day": "FRI",
+      "start": 8,
+      "end": 12
     },
     {
       "id": "m9",
-      "courseId": "ce6641__EN-013-308",
-      "roomId": "r4",
-      "day": "MON",
-      "start": 17,
-      "end": 18
+      "courseId": "ce6641__EN-012-317",
+      "roomId": "r5",
+      "day": "THU",
+      "start": 13,
+      "end": 16
     },
     {
       "id": "m10",
-      "courseId": "ce6641__EN-013-308",
-      "roomId": "r4",
-      "day": "MON",
-      "start": 19,
-      "end": 20
+      "courseId": "ce6641__EN-012-314",
+      "roomId": "r6",
+      "day": "FRI",
+      "start": 13,
+      "end": 16
     },
     {
       "id": "m11",
-      "courseId": "ce6641__EN-001-016",
-      "roomId": "r5",
-      "day": "WED",
-      "start": 8,
-      "end": 9
+      "courseId": "ce6641__EN-013-308",
+      "roomId": "r6",
+      "day": "MON",
+      "start": 17,
+      "end": 21
     },
     {
       "id": "m12",
-      "courseId": "ce6641__EN-001-016",
-      "roomId": "r5",
-      "day": "WED",
-      "start": 10,
+      "courseId": "ce6721__EN-012-316",
+      "roomId": "r1",
+      "day": "TUE",
+      "start": 8,
       "end": 11
     },
     {
       "id": "m13",
-      "courseId": "ce6641__EN-012-317",
+      "courseId": "ce6721__EN-012-318",
       "roomId": "r6",
       "day": "THU",
-      "start": 13,
-      "end": 14
+      "start": 9,
+      "end": 12
     },
     {
       "id": "m14",
-      "courseId": "ce6641__EN-013-338",
-      "roomId": "r2",
-      "day": "FRI",
-      "start": 8,
-      "end": 9
-    },
-    {
-      "id": "m15",
-      "courseId": "ce6641__EN-013-338",
-      "roomId": "r2",
-      "day": "FRI",
-      "start": 10,
-      "end": 11
-    },
-    {
-      "id": "m16",
-      "courseId": "ce6641__EN-012-314",
-      "roomId": "r4",
-      "day": "FRI",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m17",
       "courseId": "ce6721__EN-001-007",
       "roomId": "r7",
       "day": "MON",
+      "start": 13,
+      "end": 16
+    },
+    {
+      "id": "m15",
+      "courseId": "ce6721__EN-012-315",
+      "roomId": "r5",
+      "day": "TUE",
+      "start": 13,
+      "end": 16
+    },
+    {
+      "id": "m16",
+      "courseId": "ce6721__EN-013-336",
+      "roomId": "r8",
+      "day": "WED",
+      "start": 13,
+      "end": 16
+    },
+    {
+      "id": "m17",
+      "courseId": "ce6721__EN-015-319",
+      "roomId": "r6",
+      "day": "THU",
       "start": 13,
       "end": 14
     },
     {
       "id": "m18",
-      "courseId": "ce6721__EN-012-316",
-      "roomId": "r2",
-      "day": "TUE",
-      "start": 8,
-      "end": 9
+      "courseId": "ce6721__EN-012-314",
+      "roomId": "r6",
+      "day": "FRI",
+      "start": 13,
+      "end": 16
     },
     {
       "id": "m19",
-      "courseId": "ce6721__EN-012-315",
-      "roomId": "r6",
-      "day": "TUE",
-      "start": 13,
-      "end": 14
+      "courseId": "ce6721__EN-012-103",
+      "roomId": "r2",
+      "day": "THU",
+      "start": 14,
+      "end": 19
     },
     {
       "id": "m20",
-      "courseId": "ce6721__EN-013-336",
-      "roomId": "r8",
-      "day": "WED",
-      "start": 13,
-      "end": 14
+      "courseId": "ce6741__EN-012-210",
+      "roomId": "r5",
+      "day": "MON",
+      "start": 8,
+      "end": 12
     },
     {
       "id": "m21",
-      "courseId": "ce6721__EN-012-318",
-      "roomId": "r4",
-      "day": "THU",
-      "start": 9,
-      "end": 10
-    },
-    {
-      "id": "m22",
-      "courseId": "ce6721__EN-015-319",
-      "roomId": "r4",
-      "day": "THU",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m23",
-      "courseId": "ce6721__EN-012-103",
-      "roomId": "r1",
-      "day": "THU",
-      "start": 14,
-      "end": 15
-    },
-    {
-      "id": "m24",
-      "courseId": "ce6721__EN-012-103",
-      "roomId": "r1",
-      "day": "THU",
-      "start": 16,
-      "end": 17
-    },
-    {
-      "id": "m25",
-      "courseId": "ce6721__EN-012-314",
-      "roomId": "r4",
-      "day": "FRI",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m26",
       "courseId": "ce6741__EN-012-210",
-      "roomId": "r6",
-      "day": "MON",
+      "roomId": "r5",
+      "day": "TUE",
       "start": 8,
       "end": 9
     },
     {
-      "id": "m27",
-      "courseId": "ce6741__EN-012-210",
+      "id": "m22",
+      "courseId": "ce6741__EN-001-020",
       "roomId": "r6",
-      "day": "MON",
-      "start": 10,
+      "day": "THU",
+      "start": 8,
       "end": 11
     },
     {
-      "id": "m28",
+      "id": "m23",
+      "courseId": "ce6741__EN-012-208",
+      "roomId": "r5",
+      "day": "TUE",
+      "start": 9,
+      "end": 12
+    },
+    {
+      "id": "m24",
       "courseId": "ce6741__EN-001-007",
       "roomId": "r7",
       "day": "MON",
       "start": 13,
-      "end": 14
+      "end": 16
+    },
+    {
+      "id": "m25",
+      "courseId": "ce6741__EN-012-211",
+      "roomId": "r2",
+      "day": "TUE",
+      "start": 13,
+      "end": 16
+    },
+    {
+      "id": "m26",
+      "courseId": "ce6821__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "id": "m27",
+      "courseId": "ce6821__EN-001-019",
+      "roomId": "r2",
+      "day": "TUE",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "id": "m28",
+      "courseId": "ce6821__EN-001-020",
+      "roomId": "r6",
+      "day": "THU",
+      "start": 8,
+      "end": 11
     },
     {
       "id": "m29",
-      "courseId": "ce6741__EN-012-210",
-      "roomId": "r6",
-      "day": "TUE",
-      "start": 8,
-      "end": 9
-    },
-    {
-      "id": "m30",
-      "courseId": "ce6741__EN-012-208",
-      "roomId": "r6",
-      "day": "TUE",
-      "start": 9,
-      "end": 10
-    },
-    {
-      "id": "m31",
-      "courseId": "ce6741__EN-012-211",
-      "roomId": "r1",
-      "day": "TUE",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m32",
-      "courseId": "ce6741__EN-001-020",
-      "roomId": "r4",
-      "day": "THU",
-      "start": 8,
-      "end": 10
-    },
-    {
-      "id": "m33",
-      "courseId": "ce6821__EN-001-006",
-      "roomId": "r9",
-      "day": "MON",
-      "start": 8,
-      "end": 9
-    },
-    {
-      "id": "m34",
-      "courseId": "ce6821__EN-001-006",
-      "roomId": "r9",
-      "day": "MON",
-      "start": 10,
-      "end": 11
-    },
-    {
-      "id": "m35",
-      "courseId": "ce6821__EN-012-104",
-      "roomId": "r4",
-      "day": "MON",
-      "start": 14,
-      "end": 15
-    },
-    {
-      "id": "m36",
-      "courseId": "ce6821__EN-001-019",
-      "roomId": "r1",
-      "day": "TUE",
-      "start": 8,
-      "end": 9
-    },
-    {
-      "id": "m37",
-      "courseId": "ce6821__EN-001-019",
-      "roomId": "r1",
-      "day": "TUE",
-      "start": 10,
-      "end": 11
-    },
-    {
-      "id": "m38",
-      "courseId": "ce6821__EN-001-006",
-      "roomId": "r9",
-      "day": "TUE",
-      "start": 16,
-      "end": 17
-    },
-    {
-      "id": "m39",
       "courseId": "ce6821__EN-001-001",
       "roomId": "r10",
       "day": "WED",
       "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m40",
-      "courseId": "ce6821__EN-001-001",
-      "roomId": "r10",
-      "day": "WED",
-      "start": 15,
-      "end": 16
-    },
-    {
-      "id": "m41",
-      "courseId": "ce6821__EN-001-020",
-      "roomId": "r4",
-      "day": "THU",
-      "start": 8,
-      "end": 10
-    },
-    {
-      "id": "m42",
-      "courseId": "ce6821__EN-012-205",
-      "roomId": "r8",
-      "day": "FRI",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m43",
-      "courseId": "ce6821__EN-012-205",
-      "roomId": "r8",
-      "day": "FRI",
-      "start": 15,
-      "end": 16
-    },
-    {
-      "id": "m44",
-      "courseId": "ce6841__EN-001-006",
-      "roomId": "r9",
-      "day": "MON",
-      "start": 8,
-      "end": 9
-    },
-    {
-      "id": "m45",
-      "courseId": "ce6841__EN-001-006",
-      "roomId": "r9",
-      "day": "MON",
-      "start": 10,
-      "end": 11
-    },
-    {
-      "id": "m46",
-      "courseId": "ce6841__EN-012-207",
-      "roomId": "r2",
-      "day": "MON",
-      "start": 17,
       "end": 18
     },
     {
-      "id": "m47",
+      "id": "m30",
+      "courseId": "ce6821__EN-012-205",
+      "roomId": "r8",
+      "day": "FRI",
+      "start": 13,
+      "end": 18
+    },
+    {
+      "id": "m31",
+      "courseId": "ce6821__EN-012-104",
+      "roomId": "r6",
+      "day": "MON",
+      "start": 14,
+      "end": 17
+    },
+    {
+      "id": "m32",
+      "courseId": "ce6821__EN-001-006",
+      "roomId": "r9",
+      "day": "TUE",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "id": "m33",
+      "courseId": "ce6841__EN-001-006",
+      "roomId": "r9",
+      "day": "MON",
+      "start": 8,
+      "end": 12
+    },
+    {
+      "id": "m34",
       "courseId": "ce6841__EN-001-019",
-      "roomId": "r1",
+      "roomId": "r2",
       "day": "TUE",
       "start": 8,
-      "end": 9
+      "end": 12
     },
     {
-      "id": "m48",
-      "courseId": "ce6841__EN-001-019",
-      "roomId": "r1",
-      "day": "TUE",
-      "start": 10,
-      "end": 11
+      "id": "m35",
+      "courseId": "ce6841__EN-001-001",
+      "roomId": "r10",
+      "day": "WED",
+      "start": 13,
+      "end": 18
     },
     {
-      "id": "m49",
+      "id": "m36",
       "courseId": "ce6841__EN-001-006",
       "roomId": "r9",
       "day": "TUE",
@@ -923,28 +819,20 @@
       "end": 17
     },
     {
-      "id": "m50",
+      "id": "m37",
       "courseId": "ce6841__EN-012-207",
-      "roomId": "r2",
+      "roomId": "r1",
+      "day": "MON",
+      "start": 17,
+      "end": 20
+    },
+    {
+      "id": "m38",
+      "courseId": "ce6841__EN-012-207",
+      "roomId": "r1",
       "day": "TUE",
       "start": 18,
-      "end": 19
-    },
-    {
-      "id": "m51",
-      "courseId": "ce6841__EN-001-001",
-      "roomId": "r10",
-      "day": "WED",
-      "start": 13,
-      "end": 14
-    },
-    {
-      "id": "m52",
-      "courseId": "ce6841__EN-001-001",
-      "roomId": "r10",
-      "day": "WED",
-      "start": 15,
-      "end": 16
+      "end": 20
     }
   ]
 }

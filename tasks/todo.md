@@ -7,6 +7,9 @@ Order follows the dependency graph in [plan.md](plan.md). Checkpoints are human-
 
 ## T1 — Seed: PDF → JSON with days + de-duplication  ✅
 - [x] `seed_json.py` re-parses PDFs and emits `day` (MON–FRI) per meeting
+- [x] **Fix:** schedule blocks measured GEOMETRICALLY (cell x-width → duration) instead of per-column
+      text detection, which fragmented multi-hour spans. Now durations match the source CSV/contact
+      hours (e.g. EN-001-001 = WED 13–18, 5h); intra-day fragmentation 14→0. 52→38 meetings.
 - [x] Master lists: de-duplicated Rooms (truncated variants collapsed by whitespace-stripped key) and Instructors (from clean top table)
 - [x] Combined instructor cells ("A ,B") split into multiple `instructorIds` (2 co-taught courses)
 - [x] `web/data/dataset.seed.json` (6 sections, 35 courses, 12 instructors, 10 rooms, 52 meetings); headcount 0, capacity 35, version 1

@@ -4,20 +4,28 @@ Seed builder: parse the schedule PDFs in example/ into web/data/dataset.seed.jso
 Produces the Dataset shape used by the app (see web/lib/types.ts):
   sections, courses, instructors, rooms, meetings, version.
 
-Instructors come from the clean top table; rooms come from the (truncated) grid
-cells and are de-duplicated best-effort. A human reviews web/data/dedup-map.md at CP-A.
+Course metadata (name, hours, instructors) comes from the clean top table.
+Schedule blocks are measured GEOMETRICALLY from the grid cells (cell x-width -> duration),
+which captures multi-hour spans reliably; contiguous cells are merged. Instructors come from
+the top table; rooms are de-duplicated best-effort. A human reviews web/data/dedup-map.md at CP-A.
 """
 import pdfplumber
 import glob
 import re
 import json
 import os
+from collections import defaultdict
 
-DAYS = {
+DAYS_TH = {
     "จันทร์": "MON", "อังคาร": "TUE", "พุธ": "WED",
     "พฤหัสบดี": "THU", "ศุกร์": "FRI",
 }
 INSTRUCTOR_TITLES = r"(?:ผู้ช่วยศาสตราจารย์|รองศาสตราจารย์|ศาสตราจารย์|อาจารย์|ผศ\.|รศ\.|ดร\.|อ\.)"
+
+# Grid geometry calibrated for these PDFs: the 08:00 column starts at x≈69.13px,
+# and each one-hour slot is ≈54.14px wide.
+GRID_X0 = 69.13
+HOUR_PX = 54.14
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(ROOT, "web", "data")
@@ -36,14 +44,6 @@ TRUNCATION_FIXES = [
 ]
 
 
-def clean_room(name):
-    n = norm_ws(name)
-    for cut, full in TRUNCATION_FIXES:
-        if n.endswith(cut):
-            n = n[: -len(cut)] + full
-    return n
-
-
 def norm_ws(s):
     return re.sub(r"\s+", " ", (s or "").replace("\n", " ")).strip()
 
@@ -53,9 +53,16 @@ def norm_key(s):
     return re.sub(r"\s+", "", (s or "").replace("\n", "")).strip()
 
 
+def clean_room(name):
+    n = norm_ws(name)
+    for cut, full in TRUNCATION_FIXES:
+        if n.endswith(cut):
+            n = n[: -len(cut)] + full
+    return n
+
+
 def parse_section_code(group):
-    # "CE 6541" -> "CE6541"
-    return re.sub(r"\s+", "", group or "")
+    return re.sub(r"\s+", "", group or "")  # "CE 6541" -> "CE6541"
 
 
 def parse_top_table(table):
@@ -85,21 +92,6 @@ def parse_top_table(table):
     return courses
 
 
-def build_col_hour_map(table):
-    """Find the time-range row and map column index -> start hour."""
-    for i, row in enumerate(table):
-        if row and row[0] and "วัน" in row[0] and "เวลา" in row[0]:
-            time_row = table[i + 1]
-            col_hour = {}
-            for col, cell in enumerate(time_row):
-                if cell:
-                    mt = re.match(r"\s*(\d{2}):\d{2}", cell)
-                    if mt:
-                        col_hour[col] = int(mt.group(1))
-            return col_hour
-    return {}
-
-
 def extract_room(cell_text):
     """Room sits between '(CE xxxx)' and the trailing instructor title."""
     t = norm_ws(cell_text)
@@ -109,63 +101,79 @@ def extract_room(cell_text):
     return norm_ws(tail)
 
 
-def parse_schedule(table, col_hour):
-    """Return list of raw blocks: {day, code, hour, room}."""
+def day_label_tops(page):
+    """Y position of each weekday label in the left margin."""
+    tops = {}
+    for w in page.extract_words():
+        t = w["text"].strip()
+        if t in DAYS_TH and w["x0"] < 100:
+            tops[DAYS_TH[t]] = w["top"]
+    return tops
+
+
+def day_for_top(top, tops):
+    current = None
+    for day, y in sorted(tops.items(), key=lambda kv: kv[1]):
+        if top >= y - 10:
+            current = day
+    return current
+
+
+def parse_schedule_geom(page, tops):
+    """Measure each schedule cell geometrically: x0 -> start hour, width -> duration."""
+    if not tops:
+        return []
+    first_y = min(tops.values())
     blocks = []
-    current_day = None
-    for row in table:
-        if not row:
+    for cell in page.find_tables()[0].cells:
+        x0, top, x1, _bottom = cell
+        if x0 <= 65 or top < first_y - 20:
+            continue  # skip the day-label column and the top course table
+        text = page.crop(cell).extract_text() or ""
+        m = re.search(r"\[(EN-[0-9A-Z\-]+|\d{6,})\]", text)
+        if not m:
             continue
-        head = norm_ws(row[0]) if row[0] else ""
-        if head in DAYS:
-            current_day = DAYS[head]
-        if current_day is None:
+        start = 8 + round((x0 - GRID_X0) / HOUR_PX)
+        duration = max(1, round((x1 - x0) / HOUR_PX))
+        start = max(8, start)
+        end = min(22, start + duration)
+        if end <= start:
             continue
-        for col, cell in enumerate(row):
-            if not cell or col not in col_hour:
-                continue
-            mcode = re.search(r"\[(EN-[0-9A-Z\-]+|\d{6,})\]", cell)
-            if not mcode:
-                continue
-            blocks.append({
-                "day": current_day,
-                "code": norm_ws(mcode.group(1)),
-                "hour": col_hour[col],
-                "room": extract_room(cell),
-            })
+        day = day_for_top(top, tops)
+        if day is None:
+            continue
+        blocks.append({"day": day, "code": norm_ws(m.group(1)), "start": start, "end": end,
+                       "room": extract_room(text)})
     return blocks
 
 
-def merge_runs(blocks):
-    """Merge contiguous hour slots of the same (day, code) into meetings."""
-    by_key = {}
+def merge_intervals(blocks):
+    """Merge contiguous/overlapping cells of the same (day, code) into one meeting."""
+    by_key = defaultdict(list)
     for b in blocks:
-        by_key.setdefault((b["day"], b["code"]), []).append(b)
-    meetings = []
-    for (day, code), items in by_key.items():
-        items.sort(key=lambda x: x["hour"])
-        run_start = run_end = None
-        run_room = ""
-        for it in items:
-            h = it["hour"]
-            if run_start is None:
-                run_start, run_end, run_room = h, h + 1, it["room"]
-            elif h <= run_end:  # contiguous or duplicate (spanned cell)
-                run_end = max(run_end, h + 1)
-                if len(it["room"]) > len(run_room):
-                    run_room = it["room"]
+        by_key[(b["day"], b["code"])].append(b)
+    out = []
+    for items in by_key.values():
+        items.sort(key=lambda x: x["start"])
+        current = None
+        for b in items:
+            if current and b["start"] <= current["end"]:
+                current["end"] = max(current["end"], b["end"])
+                if len(b["room"]) > len(current["room"]):
+                    current["room"] = b["room"]
             else:
-                meetings.append({"day": day, "code": code, "start": run_start, "end": run_end, "room": run_room})
-                run_start, run_end, run_room = h, h + 1, it["room"]
-        if run_start is not None:
-            meetings.append({"day": day, "code": code, "start": run_start, "end": run_end, "room": run_room})
-    return meetings
+                if current:
+                    out.append(current)
+                current = dict(b)
+        if current:
+            out.append(current)
+    return out
 
 
 def main():
     sections, courses, meetings = {}, {}, []
-    instructors, rooms = {}, {}   # norm_key -> {id, name}
-    room_variants, instr_variants = {}, {}  # id -> set(raw)
+    instructors, rooms = {}, {}
+    room_variants, instr_variants = {}, {}
 
     def intern(store, variants, prefix, raw, prefer_clean=False):
         key = norm_key(raw)
@@ -176,16 +184,17 @@ def main():
             store[key] = {"id": ident, "name": raw}
             variants[ident] = set()
         elif prefer_clean and raw.count(" ") < store[key]["name"].count(" "):
-            store[key]["name"] = raw  # prefer the variant with fewest line-wrap spaces
+            store[key]["name"] = raw
         variants[store[key]["id"]].add(raw)
         return store[key]["id"]
 
     for path in sorted(glob.glob(os.path.join(ROOT, "example", "*.pdf"))):
         with pdfplumber.open(path) as pdf:
-            table = pdf.pages[0].extract_tables()[0]
-        top = parse_top_table(table)
-        col_hour = build_col_hour_map(table)
-        blocks = parse_schedule(table, col_hour)
+            page = pdf.pages[0]
+            table = page.extract_tables()[0]
+            top = parse_top_table(table)
+            tops = day_label_tops(page)
+            blocks = merge_intervals(parse_schedule_geom(page, tops))
 
         for c in top:
             sec_code = c["section"] or os.path.basename(path).split("-")[0]
@@ -201,12 +210,11 @@ def main():
                 "practicalHours": c["practical"], "instructorIds": instr_ids,
             }
 
-        # one section per file (the top table's group)
         file_section = (top[0]["section"] if top else os.path.basename(path).split("-")[0]).lower()
-        for mb in merge_runs(blocks):
+        for mb in blocks:
             course_id = f"{file_section}__{mb['code']}"
             if course_id not in courses:
-                continue  # block code not in this file's top table
+                continue
             room_id = intern(rooms, room_variants, "r", mb["room"], prefer_clean=True) if mb["room"] else None
             meetings.append({
                 "id": f"m{len(meetings) + 1}", "courseId": course_id,
@@ -227,7 +235,6 @@ def main():
     with open(os.path.join(OUT_DIR, "dataset.seed.json"), "w", encoding="utf-8") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=2)
 
-    # dedup map for human review
     lines = ["# De-duplication map (review at CP-A)\n",
              "\nRooms and instructors collapsed from raw PDF strings. Verify variants belong together.\n",
              "\n## Rooms\n"]

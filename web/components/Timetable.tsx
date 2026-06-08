@@ -69,10 +69,20 @@ export default function Timetable({ dataset, meetings, conflictIds }: TimetableP
                 {items.map(({ meeting, lane }) => {
                   const course = courseById.get(meeting.courseId);
                   const conflict = conflictIds.has(meeting.id);
+                  const hhmm = (h: number) => `${String(h).padStart(2, "0")}:00`;
+                  const tooltip = [
+                    `${course?.code ?? ""} ${course?.name ?? ""}`.trim(),
+                    `เวลา ${hhmm(meeting.start)}–${hhmm(meeting.end)} (${meeting.end - meeting.start} ชม.)`,
+                    course ? `หน่วยชั่วโมง ท${course.theoryHours} + ป${course.practicalHours}` : "",
+                    `ห้อง ${roomById.get(meeting.roomId)?.name ?? "—"}`,
+                    `ผู้สอน ${instructorNames(meeting.courseId) || "—"}`,
+                  ]
+                    .filter(Boolean)
+                    .join("\n");
                   return (
                     <div
                       key={meeting.id}
-                      title={`${course?.code ?? ""} ${course?.name ?? ""}\n${roomById.get(meeting.roomId)?.name ?? ""}\n${instructorNames(meeting.courseId)}`}
+                      title={tooltip}
                       className={`absolute overflow-hidden rounded-md border px-2 py-1 text-xs leading-tight ${
                         conflict
                           ? "border-red-300 bg-red-100 text-red-900"
