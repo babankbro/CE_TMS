@@ -85,8 +85,11 @@ tiles deep-link to detail.
 **🛑 CHECKPOINT C:** validate conflicts + concurrency before print polish.
 
 ## T9 — Schedule Sheet (print / PDF, matches original)  ✅
-- [x] `/sheet`: per-Section printable sheet — header (มหาวิทยาลัยกาฬสินธุ์ + กลุ่มเรียน), top course
-      table (ที่/รหัสวิชา/ชื่อวิชา/ท/ป/รวม/ผู้สอน), and the weekly grid (reuses `Timetable`)
+- [x] `/sheet`: printable sheet for ALL three views (กลุ่มเรียน / อาจารย์ / ห้องเรียน) via the same
+      view-kind toggle + entity selector. Header + an adaptive top table + the weekly grid (`Timetable`):
+      - section → ที่/รหัสวิชา/ชื่อวิชา/ท/ป/รวม/ผู้สอน
+      - instructor → +กลุ่มเรียน, no ผู้สอน column ("ตารางสอน อาจารย์ …")
+      - room → กลุ่มเรียน/ผู้สอน, no hours ("ตารางการใช้ห้อง …")
 - [x] Print stylesheet (`@media print`, A4 landscape, `.no-print` hides nav/controls); window.print() button
 
 **Acceptance:** ✅ CE6541 sheet matches the source PDF's top table exactly (e.g. row 1: EN-001-016
