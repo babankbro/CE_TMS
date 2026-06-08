@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getStorage } from "@/lib/storage";
-import { getDataset, saveDataset } from "@/lib/dataStore";
+import { getDataset, saveDataset, resetDataset } from "@/lib/dataStore";
 import type { Dataset } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -30,4 +30,9 @@ export async function PUT(req: Request) {
     );
   }
   return NextResponse.json(result.dataset);
+}
+
+export async function DELETE() {
+  const dataset = await resetDataset(getStorage());
+  return NextResponse.json(dataset);
 }

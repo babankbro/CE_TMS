@@ -79,6 +79,8 @@ tiles deep-link to detail.
 - [x] Course CRUD (code, name, section, ท/ป, instructors multi-select); Section (code/name/headcount); Room (name/capacity); Instructor (name); Meeting (course/room/day/start/end)
 - [x] `lib/ops.ts` diffDataset + applyOps (7 unit tests); sticky Save bar with live change count
 - [x] `persistDataset`: PUT draft; on 409 re-apply diff onto server latest and retry (auto-merge)
+- [x] Data management on `/masters`: **Download JSON** (export current), **Import JSON** (validate +
+      replace via `PUT` re-stamped to current version), **Reset** to seed (`DELETE /api/data` → `resetDataset`)
 
 **Acceptance:** ✅ two-tab concurrency proven live: tab B saves room cap=99, tab A (stale baseline) renames instructor → 409 → auto-merge → final v3 keeps BOTH changes (no data loss). UI: add row → dirty count + Save enabled.
 **Verify:** ✅ live API concurrency scenario + DOM-inspected masters UI + 28 unit tests + build.

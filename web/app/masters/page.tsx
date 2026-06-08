@@ -3,8 +3,19 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Course, Dataset, Day, Instructor, Meeting, Room, Section } from "@/lib/types";
 import { DAYS, DAY_LABELS_TH } from "@/lib/types";
-import { fetchDataset, persistDataset } from "@/lib/api";
+import { fetchDataset, persistDataset, replaceDataset, resetDataset } from "@/lib/api";
 import { diffDataset } from "@/lib/ops";
+
+function isValidDataset(o: unknown): o is Dataset {
+  if (!o || typeof o !== "object") return false;
+  const d = o as Record<string, unknown>;
+  return (
+    typeof d.version === "number" &&
+    (["sections", "courses", "instructors", "rooms", "meetings"] as const).every((k) =>
+      Array.isArray(d[k]),
+    )
+  );
+}
 
 type Tab = "meetings" | "courses" | "sections" | "instructors" | "rooms";
 const TABS: { id: Tab; label: string }[] = [
@@ -61,6 +72,63 @@ export default function MastersPage() {
     );
   }
 
+  function download() {
+    if (!draft) return;
+    const blob = new Blob([JSON.stringify(draft, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tms-dataset-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function onImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setNotice(null);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(await file.text());
+    } catch {
+      setNotice("ไฟล์ไม่ใช่ JSON ที่ถูกต้อง");
+      return;
+    }
+    if (!isValidDataset(parsed)) {
+      setNotice("รูปแบบข้อมูลไม่ถูกต้อง (ต้องมี sections/courses/instructors/rooms/meetings และ version)");
+      return;
+    }
+    if (!window.confirm("นำเข้าไฟล์นี้จะแทนที่ข้อมูลทั้งหมดในระบบ ดำเนินการต่อหรือไม่?")) return;
+    setSaving(true);
+    try {
+      const saved = await replaceDataset(parsed);
+      setBaseline(saved);
+      setDraft(structuredClone(saved));
+      setNotice("นำเข้าข้อมูลแล้ว");
+    } catch (err) {
+      setNotice((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function onReset() {
+    if (!window.confirm("รีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น? การแก้ไขทั้งหมดในระบบจะหายไป")) return;
+    setSaving(true);
+    setNotice(null);
+    try {
+      const r = await resetDataset();
+      setBaseline(r);
+      setDraft(structuredClone(r));
+      setNotice("รีเซ็ตข้อมูลแล้ว");
+    } catch (err) {
+      setNotice((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function save() {
     if (!baseline || !draft) return;
     setSaving(true);
@@ -79,9 +147,23 @@ export default function MastersPage() {
 
   return (
     <div className="space-y-4 pb-20">
-      <div>
-        <h1 className="text-xl font-semibold">จัดการข้อมูลหลัก</h1>
-        <p className="text-sm text-zinc-500">เพิ่ม ลบ แก้ไข แล้วกดบันทึก</p>
+      <div className="flex flex-wrap items-end gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">จัดการข้อมูลหลัก</h1>
+          <p className="text-sm text-zinc-500">เพิ่ม ลบ แก้ไข แล้วกดบันทึก</p>
+        </div>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <button onClick={download} className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50">
+            ดาวน์โหลด JSON
+          </button>
+          <label className="cursor-pointer rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50">
+            นำเข้า JSON
+            <input type="file" accept="application/json,.json" onChange={onImportFile} className="hidden" />
+          </label>
+          <button onClick={onReset} className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+            รีเซ็ต
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-1 border-b border-zinc-200">

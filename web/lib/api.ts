@@ -31,3 +31,18 @@ export async function persistDataset(baseline: Dataset, draft: Dataset): Promise
   if (!res.ok) throw new Error("บันทึกไม่สำเร็จ");
   return (await res.json()) as Dataset;
 }
+
+/** Force-replace the whole dataset (e.g. importing a JSON file), stamping the current version. */
+export async function replaceDataset(next: Dataset): Promise<Dataset> {
+  const current = await fetchDataset();
+  const res = await put({ ...next, version: current.version });
+  if (!res.ok) throw new Error("นำเข้าไม่สำเร็จ");
+  return (await res.json()) as Dataset;
+}
+
+/** Reset the dataset back to the bundled seed. */
+export async function resetDataset(): Promise<Dataset> {
+  const res = await fetch("/api/data", { method: "DELETE" });
+  if (!res.ok) throw new Error("รีเซ็ตไม่สำเร็จ");
+  return (await res.json()) as Dataset;
+}

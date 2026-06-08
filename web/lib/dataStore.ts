@@ -12,6 +12,14 @@ export async function getDataset(storage: Storage): Promise<Dataset> {
   return seed;
 }
 
+/** Overwrite storage with the bundled seed (a forward version bump). Used by Reset. */
+export async function resetDataset(storage: Storage): Promise<Dataset> {
+  const current = await storage.read();
+  const next: Dataset = { ...seed, version: (current?.version ?? 0) + 1 };
+  await storage.write(next);
+  return next;
+}
+
 export type SaveResult =
   | { ok: true; dataset: Dataset }
   | { ok: false; conflict: true; current: Dataset };
