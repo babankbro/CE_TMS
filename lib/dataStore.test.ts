@@ -39,6 +39,20 @@ describe("getDataset", () => {
     expect(d.version).toBe(7);
     expect(d.meetings.length).toBe(0);
   });
+
+  it("still serves the seed when persisting fails (read-only env, no Blob)", async () => {
+    const readOnly: Storage = {
+      async read() {
+        return null;
+      },
+      async write() {
+        throw new Error("EROFS: read-only file system");
+      },
+    };
+    const d = await getDataset(readOnly);
+    expect(d.version).toBe(1);
+    expect(d.meetings.length).toBeGreaterThan(0);
+  });
 });
 
 describe("saveDataset - version guard", () => {

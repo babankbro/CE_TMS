@@ -22,17 +22,25 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "missing-version" }, { status: 400 });
   }
 
-  const result = await saveDataset(getStorage(), incoming);
-  if (!result.ok) {
-    return NextResponse.json(
-      { error: "version-conflict", current: result.current },
-      { status: 409 },
-    );
+  try {
+    const result = await saveDataset(getStorage(), incoming);
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: "version-conflict", current: result.current },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json(result.dataset);
+  } catch {
+    return NextResponse.json({ error: "storage-unavailable" }, { status: 503 });
   }
-  return NextResponse.json(result.dataset);
 }
 
 export async function DELETE() {
-  const dataset = await resetDataset(getStorage());
-  return NextResponse.json(dataset);
+  try {
+    const dataset = await resetDataset(getStorage());
+    return NextResponse.json(dataset);
+  } catch {
+    return NextResponse.json({ error: "storage-unavailable" }, { status: 503 });
+  }
 }

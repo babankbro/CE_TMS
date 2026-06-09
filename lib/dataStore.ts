@@ -8,7 +8,13 @@ const seed = seedJson as unknown as Dataset;
 export async function getDataset(storage: Storage): Promise<Dataset> {
   const existing = await storage.read();
   if (existing) return existing;
-  await storage.write(seed);
+  // Best-effort: persist the seed for next time, but still serve it if the
+  // environment has no writable storage (e.g. Vercel without a Blob token).
+  try {
+    await storage.write(seed);
+  } catch {
+    // read-only filesystem and no Blob configured — viewing still works
+  }
   return seed;
 }
 
