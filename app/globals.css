@@ -48,7 +48,7 @@ body {
 
   /* ── Outer sheet wrapper: no border/shadow, fits 1 page ── */
   .print-sheet {
-    zoom: 85%;
+    zoom: 92%;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -58,13 +58,13 @@ body {
 
   /* ── Course table: ultra-compact ── */
   .print-sheet table {
-    font-size: 8.5px !important;
-    line-height: 1.25 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
     margin-bottom: 4px !important;
   }
   .print-sheet table td,
   .print-sheet table th {
-    padding: 1px 4px !important;
+    padding: 2px 5px !important;
   }
 
   /* ── Title block: tighter ── */
@@ -72,10 +72,10 @@ body {
     margin-bottom: 3px !important;
   }
   .print-sheet .text-center .font-semibold {
-    font-size: 11px !important;
+    font-size: 13px !important;
   }
   .print-sheet .text-center .text-sm {
-    font-size: 10px !important;
+    font-size: 11px !important;
   }
 
   /* ── Timetable: remove all wrapper borders ── */
