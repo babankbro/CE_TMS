@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import type { Course, Dataset, ViewKind } from "@/lib/types";
@@ -56,6 +56,13 @@ export default function SheetPage() {
   if (!dataset || !entity) return <p className="text-zinc-500">กำลังโหลด…</p>;
 
   const sectionCode = (c: Course) => dataset.sections.find((s) => s.id === c.sectionId)?.code ?? "";
+  const roomNames = (courseId: string) => {
+    const names = dataset.meetings
+      .filter((m) => m.courseId === courseId)
+      .map((m) => dataset.rooms.find((r) => r.id === m.roomId)?.name ?? "")
+      .filter(Boolean);
+    return Array.from(new Set(names)).join(", ");
+  };
   const instructorName = (ids: string[]) =>
     ids.map((id) => dataset.instructors.find((i) => i.id === id)?.name ?? "").join(", ");
 
@@ -120,7 +127,9 @@ export default function SheetPage() {
               <th className={`${th} w-8`}>ที่</th>
               <th className={th}>รหัสวิชา</th>
               <th className={th}>ชื่อวิชา</th>
+              {kind === "section" && <th className={th}>ชื่อห้องเรียน</th>}
               {kind !== "section" && <th className={th}>กลุ่มเรียน</th>}
+              {kind === "instructor" && <th className={th}>ห้องเรียน</th>}
               {kind !== "room" && (
                 <>
                   <th className={`${th} w-8 text-center`}>ท</th>
@@ -137,7 +146,9 @@ export default function SheetPage() {
                 <td className={`${th} text-center`}>{idx + 1}</td>
                 <td className={th}>{c.code}</td>
                 <td className={th}>{c.name}</td>
+                {kind === "section" && <td className={th}>{roomNames(c.id)}</td>}
                 {kind !== "section" && <td className={th}>{sectionCode(c)}</td>}
+                {kind === "instructor" && <td className={th}>{roomNames(c.id)}</td>}
                 {kind !== "room" && (
                   <>
                     <td className={`${th} text-center`}>{c.theoryHours}</td>
@@ -151,8 +162,9 @@ export default function SheetPage() {
           </tbody>
         </table>
 
-        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} />
+        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} />
       </div>
     </div>
   );
 }
+

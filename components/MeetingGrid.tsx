@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { assignLanes } from "@/lib/layout";
 import { detectConflicts } from "@/lib/conflicts";
 import { DAYS, DAY_LABELS_TH, type Dataset, type Day, type Meeting } from "@/lib/types";
@@ -10,7 +10,7 @@ const HOUR_START = 8;
 const HOUR_END = 22;
 const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
 const SPAN = HOUR_END - HOUR_START;
-const LANE_H = 52;
+const LANE_H = 64;
 
 function pct(h: number) {
   return ((h - HOUR_START) / SPAN) * 100;
@@ -64,6 +64,14 @@ export default function MeetingGrid({
   draft, filterSectionId, onAdd, onUpdate, onDelete,
 }: MeetingGridProps) {
   const [form, setForm] = useState<FormState>(IDLE);
+  const [pendingMsg, setPendingMsg] = useState<string | null>(null);
+
+  // auto-clear pending message after 6 s
+  useEffect(() => {
+    if (!pendingMsg) return;
+    const t = setTimeout(() => setPendingMsg(null), 6000);
+    return () => clearTimeout(t);
+  }, [pendingMsg]);
 
   // ── derived data ─────────────────────────────────────────────────────────────
   const courseById = new Map(draft.courses.map((c) => [c.id, c]));
@@ -107,6 +115,7 @@ export default function MeetingGrid({
 
   // ── interaction handlers ─────────────────────────────────────────────────────
   function openAddForm(day: Day, hour: number) {
+    setPendingMsg(null);
     const firstCourse = formCourses[0];
     setForm({
       mode: "add",
@@ -121,6 +130,7 @@ export default function MeetingGrid({
   }
 
   function openEditForm(m: Meeting) {
+    setPendingMsg(null);
     setForm({
       mode: "edit",
       id: m.id, courseId: m.courseId, roomId: m.roomId,
@@ -137,16 +147,19 @@ export default function MeetingGrid({
     if (!form.courseId) return;
     onAdd({ id: form.id, courseId: form.courseId, roomId: form.roomId, day: form.day, start: form.start, end: form.end, type: form.type });
     setForm(IDLE);
+    setPendingMsg("เพิ่มคาบแล้ว — กด บันทึก ที่แถบด้านล่างเพื่อบันทึกลงระบบ");
   }
 
   function submitEdit() {
     onUpdate(form.id, { courseId: form.courseId, roomId: form.roomId, day: form.day, start: form.start, end: form.end, type: form.type });
     setForm(IDLE);
+    setPendingMsg("อัปเดตคาบแล้ว — กด บันทึก ที่แถบด้านล่างเพื่อบันทึกลงระบบ");
   }
 
   function submitDelete() {
     onDelete(form.id);
     setForm(IDLE);
+    setPendingMsg("ลบคาบแล้ว — กด บันทึก ที่แถบด้านล่างเพื่อบันทึกลงระบบ");
   }
 
   // ── helpers ──────────────────────────────────────────────────────────────────
@@ -316,6 +329,15 @@ export default function MeetingGrid({
         </div>
       </div>
 
+      {/* ── pending-save reminder ── */}
+      {pendingMsg && (
+        <div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          <span>⚠️</span>
+          <span>{pendingMsg}</span>
+          <button onClick={() => setPendingMsg(null)} className="ml-auto text-amber-600 hover:text-amber-800">✕</button>
+        </div>
+      )}
+
       {/* ── editor panel ── */}
       {form.mode === "idle" ? (
         <p className="text-center text-xs text-zinc-400">
@@ -433,12 +455,12 @@ export default function MeetingGrid({
                   disabled={!form.courseId}
                   className="rounded-md bg-zinc-800 px-4 py-1.5 text-sm text-white hover:bg-zinc-700 disabled:opacity-40"
                 >
-                  + เพิ่มคาบ
+                  ✓ ยืนยันเพิ่มคาบ
                 </button>
               ) : (
                 <>
                   <button onClick={submitDelete} className="rounded-md border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">ลบ</button>
-                  <button onClick={submitEdit} className="rounded-md bg-zinc-800 px-4 py-1.5 text-sm text-white hover:bg-zinc-700">บันทึก</button>
+                  <button onClick={submitEdit} className="rounded-md bg-zinc-800 px-4 py-1.5 text-sm text-white hover:bg-zinc-700">✓ ยืนยัน</button>
                 </>
               )}
             </div>

@@ -571,9 +571,13 @@ export default function MastersPage() {
           <button
             onClick={save}
             disabled={saving || changeCount === 0}
-            className="ml-auto rounded-md bg-zinc-800 px-4 py-1.5 text-sm text-white disabled:opacity-40"
+            className={`ml-auto rounded-md px-4 py-1.5 text-sm text-white disabled:opacity-40 ${
+              changeCount > 0 && !saving
+                ? "animate-pulse bg-emerald-600 hover:bg-emerald-700 hover:[animation-play-state:paused]"
+                : "bg-zinc-800 hover:bg-zinc-700"
+            }`}
           >
-            {saving ? "กำลังบันทึก…" : "บันทึก"}
+            {saving ? "กำลังบันทึก…" : changeCount > 0 ? `💾 บันทึก (${changeCount} รายการ)` : "บันทึก"}
           </button>
         </div>
       </div>

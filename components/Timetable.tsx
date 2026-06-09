@@ -1,11 +1,11 @@
-import { DAYS, DAY_LABELS_TH, type Dataset, type Meeting } from "@/lib/types";
+import { DAYS, DAY_LABELS_TH, type Dataset, type Meeting, type ViewKind } from "@/lib/types";
 import { assignLanes } from "@/lib/layout";
 
 const HOUR_START = 8;
 const HOUR_END = 22; // exclusive upper bound (covers the 21:00–22:00 slot)
 const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
 const SPAN = HOUR_END - HOUR_START;
-const LANE_H = 52; // px per lane
+const LANE_H = 64; // px per lane — taller to fit 3 info lines comfortably
 
 function pct(hour: number) {
   return ((hour - HOUR_START) / SPAN) * 100;
@@ -15,21 +15,35 @@ export interface TimetableProps {
   dataset: Dataset;
   meetings: Meeting[];
   conflictIds: Set<string>;
+  viewKind?: ViewKind;
 }
 
-export default function Timetable({ dataset, meetings, conflictIds }: TimetableProps) {
+export default function Timetable({ dataset, meetings, conflictIds, viewKind = "section" }: TimetableProps) {
   const courseById = new Map(dataset.courses.map((c) => [c.id, c]));
   const roomById = new Map(dataset.rooms.map((r) => [r.id, r]));
   const instructorById = new Map(dataset.instructors.map((i) => [i.id, i]));
   const sectionById = new Map(dataset.sections.map((s) => [s.id, s]));
 
-  const shortRoom = (roomId: string) => (roomById.get(roomId)?.name ?? "").split(" ")[0];
+  const shortRoom = (roomId: string) =>
+    (roomById.get(roomId)?.name ?? "").split(" ").slice(0, 2).join(" ");
   const sectionCode = (courseId: string) =>
     sectionById.get(courseById.get(courseId)?.sectionId ?? "")?.code ?? "";
   const instructorNames = (courseId: string) =>
     (courseById.get(courseId)?.instructorIds ?? [])
       .map((id) => instructorById.get(id)?.name ?? "")
+      .filter(Boolean)
       .join(", ");
+
+  /** Line 3 content depends on which axis is already known from the view. */
+  function line3(meeting: Meeting): string {
+    const rm = shortRoom(meeting.roomId);
+    const sec = sectionCode(meeting.courseId);
+    const inst = instructorNames(meeting.courseId);
+    if (viewKind === "instructor") return [sec, rm].filter(Boolean).join(" · ");  // viewer = instructor; show who/where
+    if (viewKind === "room")       return [sec, inst].filter(Boolean).join(" · "); // viewer = room; show who's there
+    // section (default): viewer = section; show room and instructor
+    return [rm, inst].filter(Boolean).join(" · ");
+  }
 
   return (
     <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
@@ -97,9 +111,7 @@ export default function Timetable({ dataset, meetings, conflictIds }: TimetableP
                     >
                       <div className="font-medium">{course?.code ?? meeting.courseId}</div>
                       <div className="truncate text-[11px] opacity-80">{course?.name}</div>
-                      <div className="truncate text-[11px] opacity-70">
-                        {sectionCode(meeting.courseId)} · {shortRoom(meeting.roomId)}
-                      </div>
+                      <div className="truncate text-[11px] opacity-70">{line3(meeting)}</div>
                     </div>
                   );
                 })}

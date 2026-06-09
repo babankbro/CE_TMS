@@ -95,7 +95,7 @@ export default function TimetablePage() {
         </p>
       )}
 
-      <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} />
+      <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} />
     </div>
   );
 }
