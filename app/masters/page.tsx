@@ -6,6 +6,7 @@ import { DAYS, DAY_LABELS_TH } from "@/lib/types";
 import { fetchDataset, persistDataset, replaceDataset, resetDataset } from "@/lib/api";
 import { diffDataset } from "@/lib/ops";
 import { COURSE_CATALOG, type CatalogEntry } from "@/lib/course-catalog";
+import MeetingGrid from "@/components/MeetingGrid";
 
 // ─── CSV helpers ────────────────────────────────────────────────────────────
 
@@ -153,6 +154,7 @@ export default function MastersPage() {
   const [draft, setDraft] = useState<Dataset | null>(null);
   const [tab, setTab] = useState<Tab>("meetings");
   const [planSectionId, setPlanSectionId] = useState<string | null>(null);
+  const [meetingFilterSectionId, setMeetingFilterSectionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -533,42 +535,29 @@ export default function MastersPage() {
       })()}
 
       {tab === "meetings" && (
-        <Table headers={["รายวิชา", "ห้อง", "วัน", "เริ่ม", "จบ", ""]}>
-          {draft.meetings.map((m) => {
-            const course = draft.courses.find((c) => c.id === m.courseId);
-            return (
-              <tr key={m.id}>
-                <td className={cell}>
-                  <select className={`${input} max-w-[18rem]`} value={m.courseId} onChange={(e) => update<Meeting>("meetings", m.id, { courseId: e.target.value })}>
-                    {draft.courses.map((c) => {
-                      const sec = draft.sections.find((s) => s.id === c.sectionId)?.code ?? "";
-                      return <option key={c.id} value={c.id}>{sec} · {c.code} · {c.name}</option>;
-                    })}
-                  </select>
-                </td>
-                <td className={cell}>
-                  <select className={`${input} max-w-[14rem]`} value={m.roomId} onChange={(e) => update<Meeting>("meetings", m.id, { roomId: e.target.value })}>
-                    <option value="">—</option>
-                    {draft.rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-                  </select>
-                </td>
-                <td className={cell}>
-                  <select className={input} value={m.day} onChange={(e) => update<Meeting>("meetings", m.id, { day: e.target.value as Day })}>
-                    {DAYS.map((d) => <option key={d} value={d}>{DAY_LABELS_TH[d]}</option>)}
-                  </select>
-                </td>
-                <td className={cell}>
-                  <input type="number" min={8} max={22} className={`${input} w-16`} value={m.start} onChange={(e) => update<Meeting>("meetings", m.id, { start: Number(e.target.value) })} />
-                </td>
-                <td className={cell}>
-                  <input type="number" min={8} max={22} className={`${input} w-16`} value={m.end} onChange={(e) => update<Meeting>("meetings", m.id, { end: Number(e.target.value) })} />
-                </td>
-                <td className={cell}><DeleteBtn onClick={() => remove("meetings", m.id)} /></td>
-              </tr>
-            );
-          })}
-          <AddRow cols={6} onClick={() => add("meetings", { id: newId("m"), courseId: draft.courses[0]?.id ?? "", roomId: draft.rooms[0]?.id ?? "", day: "MON", start: 8, end: 10 } as Meeting)} />
-        </Table>
+        <div className="space-y-3">
+          {/* section filter */}
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-zinc-500">กลุ่มเรียน:</label>
+            <select
+              className={input}
+              value={meetingFilterSectionId ?? ""}
+              onChange={(e) => setMeetingFilterSectionId(e.target.value || null)}
+            >
+              <option value="">ทั้งหมด</option>
+              {draft.sections.map((s) => (
+                <option key={s.id} value={s.id}>{s.code}{s.name ? ` — ${s.name}` : ""}</option>
+              ))}
+            </select>
+          </div>
+          <MeetingGrid
+            draft={draft}
+            filterSectionId={meetingFilterSectionId}
+            onAdd={(m) => add("meetings", m)}
+            onUpdate={(id, patch) => update<Meeting>("meetings", id, patch)}
+            onDelete={(id) => remove("meetings", id)}
+          />
+        </div>
       )}
 
       {/* sticky save bar */}
