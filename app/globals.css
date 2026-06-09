@@ -48,7 +48,7 @@ body {
 
   /* ── Outer sheet wrapper: no border/shadow, fits 1 page ── */
   .print-sheet {
-    zoom: 92%;
+    zoom: 88%;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;

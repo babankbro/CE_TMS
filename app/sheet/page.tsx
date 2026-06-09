@@ -167,7 +167,7 @@ export default function SheetPage() {
           </tbody>
         </table>
 
-        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} laneHeight={91} />
+        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} laneHeight={73} />
       </div>
     </div>
   );
