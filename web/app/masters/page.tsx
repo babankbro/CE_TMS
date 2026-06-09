@@ -117,7 +117,18 @@ export default function MastersPage() {
     }
   }
 
+  function passwordOk(): boolean {
+    const pw = window.prompt("ใส่รหัสผ่านเพื่อดำเนินการ");
+    if (pw === null) return false;
+    if (pw !== RESET_PASSWORD) {
+      setNotice("รหัสผ่านไม่ถูกต้อง");
+      return false;
+    }
+    return true;
+  }
+
   async function onClear() {
+    if (!passwordOk()) return;
     if (!window.confirm("ล้างข้อมูลทั้งหมดให้ว่างเปล่า? (เริ่มสร้างตารางใหม่จากศูนย์)")) return;
     setSaving(true);
     setNotice(null);
@@ -142,12 +153,7 @@ export default function MastersPage() {
   }
 
   async function onReset() {
-    const pw = window.prompt("ใส่รหัสผ่านเพื่อรีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น");
-    if (pw === null) return;
-    if (pw !== RESET_PASSWORD) {
-      setNotice("รหัสผ่านไม่ถูกต้อง");
-      return;
-    }
+    if (!passwordOk()) return;
     if (!window.confirm("รีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น? การแก้ไขทั้งหมดในระบบจะหายไป")) return;
     setSaving(true);
     setNotice(null);
