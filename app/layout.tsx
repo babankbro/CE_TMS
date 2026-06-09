@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Sarabun } from "next/font/google";
 import "./globals.css";
+
+const sarabun = Sarabun({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sarabun",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "ระบบตารางเรียนตารางสอน (TMS)",
@@ -19,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className="h-full antialiased">
+    <html lang="th" className={`h-full antialiased ${sarabun.variable}`}>
       <body suppressHydrationWarning className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
         <header className="no-print border-b border-zinc-200 bg-white">
           <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">

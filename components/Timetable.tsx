@@ -16,9 +16,10 @@ export interface TimetableProps {
   meetings: Meeting[];
   conflictIds: Set<string>;
   viewKind?: ViewKind;
+  laneHeight?: number; // override LANE_H for compact print mode
 }
 
-export default function Timetable({ dataset, meetings, conflictIds, viewKind = "section" }: TimetableProps) {
+export default function Timetable({ dataset, meetings, conflictIds, viewKind = "section", laneHeight = LANE_H }: TimetableProps) {
   const courseById = new Map(dataset.courses.map((c) => [c.id, c]));
   const roomById = new Map(dataset.rooms.map((r) => [r.id, r]));
   const instructorById = new Map(dataset.instructors.map((i) => [i.id, i]));
@@ -66,7 +67,7 @@ export default function Timetable({ dataset, meetings, conflictIds, viewKind = "
         {DAYS.map((day) => {
           const dayMeetings = meetings.filter((m) => m.day === day);
           const { items, laneCount } = assignLanes(dayMeetings);
-          const rowHeight = laneCount * LANE_H + 8;
+          const rowHeight = laneCount * laneHeight + 8;
           return (
             <div key={day} className="flex border-b border-zinc-100 last:border-b-0">
               <div className="w-20 shrink-0 px-2 py-2 text-sm font-medium text-zinc-700">
@@ -105,8 +106,8 @@ export default function Timetable({ dataset, meetings, conflictIds, viewKind = "
                       style={{
                         left: `${pct(meeting.start)}%`,
                         width: `${pct(meeting.end) - pct(meeting.start)}%`,
-                        top: lane * LANE_H + 4,
-                        height: LANE_H - 6,
+                        top: lane * laneHeight + 4,
+                        height: laneHeight - 6,
                       }}
                     >
                       <div className="font-medium">{course?.code ?? meeting.courseId}</div>
