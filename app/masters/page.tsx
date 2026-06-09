@@ -5,6 +5,7 @@ import type { Course, Dataset, Day, Instructor, Meeting, Room, Section } from "@
 import { DAYS, DAY_LABELS_TH } from "@/lib/types";
 import { fetchDataset, persistDataset, replaceDataset, resetDataset } from "@/lib/api";
 import { diffDataset } from "@/lib/ops";
+import { COURSE_CATALOG, type CatalogEntry } from "@/lib/course-catalog";
 
 // ─── CSV helpers ────────────────────────────────────────────────────────────
 
@@ -60,8 +61,8 @@ function datasetToCsv(tab: Tab, d: Dataset): string {
     return rows.join("\n");
   }
   if (tab === "courses") {
-    const rows = [toCsvRow(["id", "code", "name", "sectionId", "theoryHours", "practicalHours", "instructorIds"])];
-    d.courses.forEach((c) => rows.push(toCsvRow([c.id, c.code, c.name, c.sectionId, c.theoryHours, c.practicalHours, c.instructorIds.join(";")])));
+    const rows = [toCsvRow(["id", "code", "name", "sectionId", "credits", "theoryHours", "practicalHours", "instructorIds"])];
+    d.courses.forEach((c) => rows.push(toCsvRow([c.id, c.code, c.name, c.sectionId, c.credits ?? 0, c.theoryHours, c.practicalHours, c.instructorIds.join(";")])));
     return rows.join("\n");
   }
   // meetings
@@ -99,7 +100,7 @@ function csvToCollection(tab: Tab, rows: Record<string, string>[], draft: Datase
         if (!r.code) throw new Error(`แถว ${i + 2}: code ว่าง`);
         if (r.sectionId && !sectionIds.has(r.sectionId)) throw new Error(`แถว ${i + 2}: sectionId "${r.sectionId}" ไม่พบ`);
         const instructorIds = r.instructorIds ? r.instructorIds.split(";").map((x) => x.trim()).filter(Boolean) : [];
-        return { id: r.id || newId("c"), code: r.code, name: r.name ?? "", sectionId: r.sectionId ?? draft.sections[0]?.id ?? "", theoryHours: Number(r.theoryHours) || 0, practicalHours: Number(r.practicalHours) || 0, instructorIds };
+        return { id: r.id || newId("c"), code: r.code, name: r.name ?? "", sectionId: r.sectionId ?? draft.sections[0]?.id ?? "", credits: Number(r.credits) || 0, theoryHours: Number(r.theoryHours) || 0, practicalHours: Number(r.practicalHours) || 0, instructorIds };
       });
       return { ok: true, items };
     }
@@ -151,6 +152,7 @@ export default function MastersPage() {
   const [baseline, setBaseline] = useState<Dataset | null>(null);
   const [draft, setDraft] = useState<Dataset | null>(null);
   const [tab, setTab] = useState<Tab>("meetings");
+  const [planSectionId, setPlanSectionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -435,40 +437,104 @@ export default function MastersPage() {
         </Table>
       )}
 
-      {tab === "courses" && (
-        <Table headers={["รหัสวิชา", "ชื่อวิชา", "กลุ่ม", "ท", "ป", "อาจารย์", ""]}>
-          {draft.courses.map((c) => (
-            <tr key={c.id}>
-              <td className={cell}>
-                <input className={`${input} w-28`} value={c.code} onChange={(e) => update<Course>("courses", c.id, { code: e.target.value })} />
-              </td>
-              <td className={cell}>
-                <input className={`${input} w-48`} value={c.name} onChange={(e) => update<Course>("courses", c.id, { name: e.target.value })} />
-              </td>
-              <td className={cell}>
-                <select className={input} value={c.sectionId} onChange={(e) => update<Course>("courses", c.id, { sectionId: e.target.value })}>
-                  {draft.sections.map((s) => <option key={s.id} value={s.id}>{s.code}</option>)}
-                </select>
-              </td>
-              <td className={cell}>
-                <input type="number" className={`${input} w-12`} value={c.theoryHours} onChange={(e) => update<Course>("courses", c.id, { theoryHours: Number(e.target.value) })} />
-              </td>
-              <td className={cell}>
-                <input type="number" className={`${input} w-12`} value={c.practicalHours} onChange={(e) => update<Course>("courses", c.id, { practicalHours: Number(e.target.value) })} />
-              </td>
-              <td className={cell}>
-                <InstructorPicker
-                  instructors={draft.instructors}
-                  selected={c.instructorIds}
-                  onChange={(ids) => update<Course>("courses", c.id, { instructorIds: ids })}
-                />
-              </td>
-              <td className={cell}><DeleteBtn onClick={() => remove("courses", c.id)} /></td>
-            </tr>
-          ))}
-          <AddRow cols={7} onClick={() => add("courses", { id: newId("c"), code: "", name: "", sectionId: draft.sections[0]?.id ?? "", theoryHours: 0, practicalHours: 0, instructorIds: [] } as Course)} />
-        </Table>
-      )}
+      {tab === "courses" && (() => {
+        const activeSectionId = planSectionId ?? draft.sections[0]?.id ?? null;
+        const visibleCourses = activeSectionId
+          ? draft.courses.filter((c) => c.sectionId === activeSectionId)
+          : draft.courses;
+        const totalCredits = visibleCourses.reduce((s, c) => s + (c.credits ?? 0), 0);
+        const totalTheory = visibleCourses.reduce((s, c) => s + c.theoryHours, 0);
+        const totalPractical = visibleCourses.reduce((s, c) => s + c.practicalHours, 0);
+        return (
+          <div className="space-y-3">
+            {/* Section selector */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-zinc-500">กลุ่มเรียน:</span>
+              {draft.sections.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setPlanSectionId(s.id)}
+                  className={`rounded-full px-3 py-0.5 text-xs font-medium transition-colors ${
+                    activeSectionId === s.id
+                      ? "bg-zinc-800 text-white"
+                      : "border border-zinc-300 text-zinc-600 hover:bg-zinc-50"
+                  }`}
+                >
+                  {s.code}
+                </button>
+              ))}
+            </div>
+
+            {/* Catalog picker */}
+            {activeSectionId && (
+              <CourseCatalogPicker
+                onAdd={(entry) => {
+                  add("courses", {
+                    id: newId("c"),
+                    code: entry.code,
+                    name: entry.name,
+                    sectionId: activeSectionId,
+                    credits: entry.credits,
+                    theoryHours: entry.theoryHours,
+                    practicalHours: entry.practicalHours,
+                    instructorIds: [],
+                  } as Course);
+                }}
+              />
+            )}
+
+            <Table headers={["รหัสวิชา", "ชื่อวิชา", "กลุ่ม", "หน่วยกิต", "ท", "ป", "รวม", "อาจารย์", ""]}>
+              {visibleCourses.map((c) => (
+                <tr key={c.id}>
+                  <td className={cell}>
+                    <input className={`${input} w-28`} value={c.code} onChange={(e) => update<Course>("courses", c.id, { code: e.target.value })} />
+                  </td>
+                  <td className={cell}>
+                    <input className={`${input} w-48`} value={c.name} onChange={(e) => update<Course>("courses", c.id, { name: e.target.value })} />
+                  </td>
+                  <td className={cell}>
+                    <select className={input} value={c.sectionId} onChange={(e) => update<Course>("courses", c.id, { sectionId: e.target.value })}>
+                      {draft.sections.map((s) => <option key={s.id} value={s.id}>{s.code}</option>)}
+                    </select>
+                  </td>
+                  <td className={cell}>
+                    <input type="number" className={`${input} w-14`} value={c.credits ?? 0} onChange={(e) => update<Course>("courses", c.id, { credits: Number(e.target.value) })} />
+                  </td>
+                  <td className={cell}>
+                    <input type="number" className={`${input} w-12`} value={c.theoryHours} onChange={(e) => update<Course>("courses", c.id, { theoryHours: Number(e.target.value) })} />
+                  </td>
+                  <td className={cell}>
+                    <input type="number" className={`${input} w-12`} value={c.practicalHours} onChange={(e) => update<Course>("courses", c.id, { practicalHours: Number(e.target.value) })} />
+                  </td>
+                  <td className={`${cell} text-center text-sm font-medium text-zinc-700`}>
+                    {c.theoryHours + c.practicalHours}
+                  </td>
+                  <td className={cell}>
+                    <InstructorPicker
+                      instructors={draft.instructors}
+                      selected={c.instructorIds}
+                      onChange={(ids) => update<Course>("courses", c.id, { instructorIds: ids })}
+                    />
+                  </td>
+                  <td className={cell}><DeleteBtn onClick={() => remove("courses", c.id)} /></td>
+                </tr>
+              ))}
+              {/* Summary row */}
+              {visibleCourses.length > 0 && (
+                <tr className="bg-zinc-50 text-xs font-semibold text-zinc-600">
+                  <td colSpan={3} className="px-2 py-1.5 text-right">รวม ({visibleCourses.length} วิชา)</td>
+                  <td className="px-2 py-1.5">{totalCredits}</td>
+                  <td className="px-2 py-1.5">{totalTheory}</td>
+                  <td className="px-2 py-1.5">{totalPractical}</td>
+                  <td className="px-2 py-1.5">{totalTheory + totalPractical}</td>
+                  <td colSpan={2} />
+                </tr>
+              )}
+              <AddRow cols={9} onClick={() => add("courses", { id: newId("c"), code: "", name: "", sectionId: activeSectionId ?? draft.sections[0]?.id ?? "", credits: 0, theoryHours: 0, practicalHours: 0, instructorIds: [] } as Course)} />
+            </Table>
+          </div>
+        );
+      })()}
 
       {tab === "meetings" && (
         <Table headers={["รายวิชา", "ห้อง", "วัน", "เริ่ม", "จบ", ""]}>
@@ -538,6 +604,66 @@ function Table({ headers, children }: { headers: string[]; children: React.React
         </thead>
         <tbody>{children}</tbody>
       </table>
+    </div>
+  );
+}
+
+// ─── Course Catalog Picker ───────────────────────────────────────────────────
+
+function CourseCatalogPicker({ onAdd }: { onAdd: (entry: CatalogEntry) => void }) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [open]);
+
+  const q = query.trim().toLowerCase();
+  const results = q.length < 1
+    ? COURSE_CATALOG
+    : COURSE_CATALOG.filter(
+        (e) => e.code.toLowerCase().includes(q) || e.name.toLowerCase().includes(q) || e.category.toLowerCase().includes(q)
+      );
+
+  return (
+    <div ref={ref} className="relative w-full max-w-lg">
+      <div className="flex gap-2">
+        <input
+          className="flex-1 rounded border border-zinc-300 px-3 py-1.5 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+          placeholder="🔍 ค้นหารายวิชาจากหลักสูตร (รหัส / ชื่อ / หมวด)"
+          value={query}
+          onFocus={() => setOpen(true)}
+          onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+        />
+        {query && (
+          <button onClick={() => { setQuery(""); setOpen(false); }} className="rounded border border-zinc-300 px-2 py-1 text-xs text-zinc-500 hover:bg-zinc-50">✕</button>
+        )}
+      </div>
+      {open && (
+        <div className="absolute left-0 top-full z-30 mt-1 max-h-72 w-full overflow-y-auto rounded border border-zinc-200 bg-white shadow-xl">
+          {results.length === 0 && <p className="px-3 py-2 text-xs text-zinc-400">ไม่พบรายวิชา</p>}
+          {results.map((e) => (
+            <button
+              key={e.code}
+              type="button"
+              onClick={() => { onAdd(e); setQuery(""); setOpen(false); }}
+              className="flex w-full items-start gap-3 px-3 py-2 text-left hover:bg-zinc-50"
+            >
+              <span className="w-28 shrink-0 font-mono text-xs text-zinc-500">{e.code}</span>
+              <span className="flex-1 text-xs text-zinc-800">{e.name}</span>
+              <span className="shrink-0 text-xs text-zinc-400">
+                {e.credits} หน่วยกิต · ท{e.theoryHours} ป{e.practicalHours}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

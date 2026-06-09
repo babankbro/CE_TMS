@@ -26,6 +26,7 @@ export interface Course {
   code: string;
   name: string;
   sectionId: string;
+  credits: number;
   theoryHours: number;
   practicalHours: number;
   instructorIds: string[];
