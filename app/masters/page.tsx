@@ -448,21 +448,17 @@ export default function MastersPage() {
         return (
           <div className="space-y-3">
             {/* Section selector */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-zinc-500">กลุ่มเรียน:</span>
-              {draft.sections.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setPlanSectionId(s.id)}
-                  className={`rounded-full px-3 py-0.5 text-xs font-medium transition-colors ${
-                    activeSectionId === s.id
-                      ? "bg-zinc-800 text-white"
-                      : "border border-zinc-300 text-zinc-600 hover:bg-zinc-50"
-                  }`}
-                >
-                  {s.code}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-zinc-500">กลุ่มเรียน:</label>
+              <select
+                className={input}
+                value={activeSectionId ?? ""}
+                onChange={(e) => setPlanSectionId(e.target.value || null)}
+              >
+                {draft.sections.map((s) => (
+                  <option key={s.id} value={s.id}>{s.code}{s.name ? ` — ${s.name}` : ""}</option>
+                ))}
+              </select>
             </div>
 
             {/* Catalog picker */}
