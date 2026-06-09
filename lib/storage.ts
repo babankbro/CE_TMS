@@ -52,6 +52,51 @@ function blobStorage(): Storage {
   };
 }
 
+/**
+ * GitHub Gist backend — alternative to Vercel Blob.
+ * Requires env vars: GIST_ID and GITHUB_TOKEN (classic PAT with "gist" scope).
+ * Setup: https://gist.github.com → create secret gist with one file "dataset.json"
+ *        containing {} → copy the gist ID from the URL.
+ */
+function gistStorage(gistId: string, token: string): Storage {
+  const API = `https://api.github.com/gists/${gistId}`;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "Content-Type": "application/json",
+  };
+  return {
+    async read() {
+      try {
+        const res = await fetch(API, { headers, cache: "no-store" });
+        if (!res.ok) return null;
+        const gist = (await res.json()) as { files: Record<string, { content: string }> };
+        const content = gist.files["dataset.json"]?.content;
+        if (!content || content.trim() === "{}") return null;
+        return JSON.parse(content) as Dataset;
+      } catch {
+        return null;
+      }
+    },
+    async write(dataset) {
+      const res = await fetch(API, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+          files: { "dataset.json": { content: JSON.stringify(dataset) } },
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.text().catch(() => res.statusText);
+        throw new Error(`Gist write failed (${res.status}): ${err}`);
+      }
+    },
+  };
+}
+
 export function getStorage(): Storage {
-  return process.env.BLOB_READ_WRITE_TOKEN ? blobStorage() : fileStorage();
+  if (process.env.BLOB_READ_WRITE_TOKEN) return blobStorage();
+  if (process.env.GIST_ID && process.env.GITHUB_TOKEN)
+    return gistStorage(process.env.GIST_ID, process.env.GITHUB_TOKEN);
+  return fileStorage();
 }
