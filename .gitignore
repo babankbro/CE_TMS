@@ -1,11 +1,14 @@
 # Node / Next.js
 node_modules/
-web/.next/
-web/out/
-web/next-env.d.ts
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
 
 # Local dev datastore (Blob fallback)
-web/data/dataset.local.json
+data/dataset.local.json
 
 # Env
 .env

@@ -28,7 +28,7 @@ GRID_X0 = 69.13
 HOUR_PX = 54.14
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(ROOT, "web", "data")
+OUT_DIR = os.path.join(ROOT, "data")
 
 # Headcount per section (students). Temporary uniform estimate of 20 until real
 # numbers are known; edit these or adjust per-section in the app (T8). 0 = unknown.

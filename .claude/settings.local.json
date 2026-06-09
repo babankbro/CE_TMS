@@ -35,7 +35,13 @@
       "Bash(curl -s -o /dev/null -w \"GET / -> HTTP %{http_code}\\\\n\" http://localhost:3000/)",
       "Bash(curl -s -o /dev/null -w \"GET /api/data -> HTTP %{http_code}\\\\n\" http://localhost:3000/api/data)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/data)",
-      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('API ok — version',d['version'],'sections',len\\(d['sections']\\),'meetings',len\\(d['meetings']\\)\\)\")"
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('API ok — version',d['version'],'sections',len\\(d['sections']\\),'meetings',len\\(d['meetings']\\)\\)\")",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git ls-remote *)",
+      "Bash(grep -vE '^\\\\.git$')",
+      "PowerShell(if \\(Test-Path web\\) { try { Remove-Item -Path web -Recurse -Force -ErrorAction Stop; \"removed\" } catch { \"busy: $\\($_.Exception.Message\\)\" } } else { \"already gone\" })",
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('API: version',d['version'],'sections',len\\(d['sections']\\),'meetings',len\\(d['meetings']\\)\\)\")"
     ]
   }
 }
