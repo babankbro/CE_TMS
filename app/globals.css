@@ -43,31 +43,59 @@ body {
 
   @page {
     size: A4 landscape;
-    margin: 8mm 10mm;
+    margin: 6mm 8mm;
   }
 
-  /* Scale the printable sheet to fit 1 A4 landscape page */
+  /* ── Outer sheet wrapper: no border/shadow, fits 1 page ── */
   .print-sheet {
-    zoom: 78%;
+    zoom: 80%;
     border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 4mm !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* Tighter table rows */
+  /* ── Course table: ultra-compact ── */
+  .print-sheet table {
+    font-size: 8.5px !important;
+    line-height: 1.25 !important;
+    margin-bottom: 4px !important;
+  }
   .print-sheet table td,
   .print-sheet table th {
-    padding: 2px 4px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* ── Title block: tighter ── */
+  .print-sheet .text-center {
+    margin-bottom: 3px !important;
+  }
+  .print-sheet .text-center .font-semibold {
+    font-size: 11px !important;
+  }
+  .print-sheet .text-center .text-sm {
     font-size: 10px !important;
   }
 
-  /* Remove rounded corners on blocks for print clarity */
+  /* ── Timetable: remove all wrapper borders ── */
+  .print-sheet .overflow-x-auto {
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  .print-sheet .min-w-\[820px\] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Remove rounded corners on blocks — cleaner in print */
   .print-sheet .rounded-md {
     border-radius: 2px !important;
   }
 
-  /* Remove overflow scroll wrappers — must show full width */
-  .print-sheet .overflow-x-auto {
-    overflow: visible !important;
+  /* Timetable day-label column: compact */
+  .print-sheet .w-20 {
+    width: 3rem !important;
   }
 }

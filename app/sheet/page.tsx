@@ -106,7 +106,12 @@ export default function SheetPage() {
             ))}
           </select>
           <button
-            onClick={() => window.print()}
+            onClick={() => {
+              const prev = document.title;
+              document.title = entity?.label ? `ตารางสอน ${entity.label}` : "ใบตารางสอน";
+              window.print();
+              document.title = prev;
+            }}
             className="rounded-md bg-zinc-800 px-4 py-1.5 text-sm text-white"
           >
             พิมพ์ / บันทึก PDF
@@ -162,7 +167,7 @@ export default function SheetPage() {
           </tbody>
         </table>
 
-        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} laneHeight={38} />
+        <Timetable dataset={dataset} meetings={meetings} conflictIds={conflictIds} viewKind={kind} laneHeight={54} />
       </div>
     </div>
   );
