@@ -47,6 +47,7 @@ export interface Room {
 /**
  * One teaching block — one row of the timetable. Exactly one day.
  * start/end are integer hours in 8..21. Section and instructors are derived from the Course.
+ * type: "ท" = theory, "ป" = practical, "" = unspecified (legacy / unknown)
  */
 export interface Meeting {
   id: string;
@@ -55,6 +56,7 @@ export interface Meeting {
   day: Day;
   start: number;
   end: number;
+  type: "ท" | "ป" | "";
 }
 
 /** The entire dataset, stored as one JSON document in Vercel Blob. */

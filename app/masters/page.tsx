@@ -67,8 +67,8 @@ function datasetToCsv(tab: Tab, d: Dataset): string {
     return rows.join("\n");
   }
   // meetings
-  const rows = [toCsvRow(["id", "courseId", "roomId", "day", "start", "end"])];
-  d.meetings.forEach((m) => rows.push(toCsvRow([m.id, m.courseId, m.roomId, m.day, m.start, m.end])));
+  const rows = [toCsvRow(["id", "courseId", "roomId", "day", "start", "end", "type"])];
+  d.meetings.forEach((m) => rows.push(toCsvRow([m.id, m.courseId, m.roomId, m.day, m.start, m.end, m.type ?? ""])));
   return rows.join("\n");
 }
 
@@ -113,7 +113,8 @@ function csvToCollection(tab: Tab, rows: Record<string, string>[], draft: Datase
       if (!r.courseId || !courseIds.has(r.courseId)) throw new Error(`แถว ${i + 2}: courseId "${r.courseId}" ไม่พบ`);
       if (r.roomId && !roomIds.has(r.roomId)) throw new Error(`แถว ${i + 2}: roomId "${r.roomId}" ไม่พบ`);
       if (!validDays.has(r.day)) throw new Error(`แถว ${i + 2}: day "${r.day}" ต้องเป็น MON/TUE/WED/THU/FRI`);
-      return { id: r.id || newId("m"), courseId: r.courseId, roomId: r.roomId ?? "", day: r.day as Day, start: Number(r.start) || 8, end: Number(r.end) || 10 };
+      const mtype = r.type === "ท" || r.type === "ป" ? r.type : "";
+      return { id: r.id || newId("m"), courseId: r.courseId, roomId: r.roomId ?? "", day: r.day as Day, start: Number(r.start) || 8, end: Number(r.end) || 10, type: mtype } as Meeting;
     });
     return { ok: true, items };
   } catch (e) {
