@@ -26,6 +26,10 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "rooms", label: "ห้องเรียน" },
 ];
 
+// Guards the destructive Reset action against accidental clicks (10 trusted staff;
+// this is a deterrent, not real auth — the value ships in the client bundle).
+const RESET_PASSWORD = "sarayut";
+
 const newId = (p: string) => `${p}_${crypto.randomUUID().slice(0, 8)}`;
 const input = "rounded border border-zinc-300 px-2 py-1 text-sm";
 const cell = "border-b border-zinc-100 px-2 py-1 align-top";
@@ -138,6 +142,12 @@ export default function MastersPage() {
   }
 
   async function onReset() {
+    const pw = window.prompt("ใส่รหัสผ่านเพื่อรีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น");
+    if (pw === null) return;
+    if (pw !== RESET_PASSWORD) {
+      setNotice("รหัสผ่านไม่ถูกต้อง");
+      return;
+    }
     if (!window.confirm("รีเซ็ตข้อมูลกลับเป็นค่าตั้งต้น? การแก้ไขทั้งหมดในระบบจะหายไป")) return;
     setSaving(true);
     setNotice(null);
