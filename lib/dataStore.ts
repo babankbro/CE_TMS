@@ -1,13 +1,20 @@
 import type { Storage } from "./storage";
 import type { Dataset } from "./types";
+import { COURSE_CATALOG } from "./course-catalog";
 import seedJson from "../data/dataset.seed.json";
 
 const seed = seedJson as unknown as Dataset;
 
+/** Fill any fields added after old JSON was stored (forward-compat). */
+function hydrate(d: Dataset): Dataset {
+  if (!d.catalog?.length) return { ...d, catalog: COURSE_CATALOG };
+  return d;
+}
+
 /** Read the dataset, seeding storage from the bundled seed on first use. */
 export async function getDataset(storage: Storage): Promise<Dataset> {
   const existing = await storage.read();
-  if (existing) return existing;
+  if (existing) return hydrate(existing);
   // Best-effort: persist the seed for next time, but still serve it if the
   // environment has no writable storage (e.g. Vercel without a Blob token).
   try {
@@ -21,7 +28,7 @@ export async function getDataset(storage: Storage): Promise<Dataset> {
 /** Overwrite storage with the bundled seed (a forward version bump). Used by Reset. */
 export async function resetDataset(storage: Storage): Promise<Dataset> {
   const current = await storage.read();
-  const next: Dataset = { ...seed, version: (current?.version ?? 0) + 1 };
+  const next: Dataset = hydrate({ ...seed, version: (current?.version ?? 0) + 1 });
   await storage.write(next);
   return next;
 }

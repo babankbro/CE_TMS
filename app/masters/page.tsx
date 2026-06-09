@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Course, Dataset, Day, Instructor, Meeting, Room, Section } from "@/lib/types";
+import type { CatalogEntry, Course, Dataset, Day, Instructor, Meeting, Room, Section } from "@/lib/types";
 import { DAYS, DAY_LABELS_TH } from "@/lib/types";
 import { fetchDataset, persistDataset, replaceDataset, resetDataset } from "@/lib/api";
 import { diffDataset } from "@/lib/ops";
-import { COURSE_CATALOG, type CatalogEntry } from "@/lib/course-catalog";
+import { COURSE_CATALOG } from "@/lib/course-catalog";
 import MeetingGrid from "@/components/MeetingGrid";
 
 // ─── CSV helpers ────────────────────────────────────────────────────────────
@@ -133,13 +133,14 @@ function isValidDataset(o: unknown): o is Dataset {
   );
 }
 
-type Tab = "meetings" | "courses" | "sections" | "instructors" | "rooms";
+type Tab = "meetings" | "courses" | "sections" | "instructors" | "rooms" | "catalog";
 const TABS: { id: Tab; label: string }[] = [
   { id: "meetings", label: "คาบสอน" },
   { id: "courses", label: "รายวิชา" },
   { id: "sections", label: "กลุ่มเรียน" },
   { id: "instructors", label: "อาจารย์" },
   { id: "rooms", label: "ห้องเรียน" },
+  { id: "catalog", label: "หลักสูตร" },
 ];
 
 // Guards the destructive Reset action against accidental clicks (10 trusted staff;
@@ -284,6 +285,7 @@ export default function MastersPage() {
         instructors: [],
         rooms: [],
         meetings: [],
+        catalog: [],
       };
       const saved = await replaceDataset(empty);
       setBaseline(saved);
@@ -467,6 +469,7 @@ export default function MastersPage() {
             {/* Catalog picker */}
             {activeSectionId && (
               <CourseCatalogPicker
+                catalog={draft.catalog ?? []}
                 onAdd={(entry) => {
                   add("courses", {
                     id: newId("c"),
@@ -535,6 +538,15 @@ export default function MastersPage() {
         );
       })()}
 
+      {tab === "catalog" && (
+        <CatalogTab
+          catalog={draft.catalog ?? []}
+          onAdd={(e) => add("catalog", e)}
+          onUpdate={(id, patch) => update<CatalogEntry>("catalog", id, patch)}
+          onDelete={(id) => remove("catalog", id)}
+        />
+      )}
+
       {tab === "meetings" && (
         <div className="space-y-3">
           {/* section filter */}
@@ -598,9 +610,138 @@ function Table({ headers, children }: { headers: string[]; children: React.React
   );
 }
 
+// ─── Catalog Tab ────────────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  "ทั้งหมด",
+  "ศึกษาทั่วไป (พื้นฐาน)",
+  "ศึกษาทั่วไป (เลือก)",
+  "วิชาแกน",
+  "วิชาเฉพาะด้าน",
+  "โครงงานและสัมมนา",
+  "วิชาชีพเลือก",
+  "ประสบการณ์ภาคสนาม",
+];
+
+interface CatalogTabProps {
+  catalog: CatalogEntry[];
+  onAdd: (e: CatalogEntry) => void;
+  onUpdate: (id: string, patch: Partial<CatalogEntry>) => void;
+  onDelete: (id: string) => void;
+}
+
+function CatalogTab({ catalog, onAdd, onUpdate, onDelete }: CatalogTabProps) {
+  const [search, setSearch] = useState("");
+  const [catFilter, setCatFilter] = useState("ทั้งหมด");
+
+  const visible = catalog.filter((e) => {
+    const q = search.trim().toLowerCase();
+    const matchQ = !q || e.code.toLowerCase().includes(q) || e.name.toLowerCase().includes(q);
+    const matchCat = catFilter === "ทั้งหมด" || e.category === catFilter;
+    return matchQ && matchCat;
+  });
+
+  const totalCredits = visible.reduce((s, e) => s + e.credits, 0);
+
+  function addEntry() {
+    const id = newId("cat");
+    onAdd({ id, code: "", name: "", credits: 0, theoryHours: 0, practicalHours: 0, category: "วิชาเฉพาะด้าน" });
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          className={`${input} w-52`}
+          placeholder="🔍 ค้นหารหัส / ชื่อวิชา"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select className={input} value={catFilter} onChange={(e) => setCatFilter(e.target.value)}>
+          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <span className="ml-auto text-xs text-zinc-500">{visible.length} รายวิชา · {totalCredits} หน่วยกิตรวม</span>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+        <table className="w-full text-sm">
+          <thead className="bg-zinc-50 text-left text-xs text-zinc-500">
+            <tr>
+              <th className="px-2 py-2 font-medium">รหัสวิชา</th>
+              <th className="px-2 py-2 font-medium">ชื่อวิชา</th>
+              <th className="px-2 py-2 font-medium">หมวด</th>
+              <th className="px-2 py-2 text-center font-medium">หน่วยกิต</th>
+              <th className="px-2 py-2 text-center font-medium">ท</th>
+              <th className="px-2 py-2 text-center font-medium">ป</th>
+              <th className="px-2 py-2 text-center font-medium">รวม</th>
+              <th className="px-2 py-2 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {visible.map((e) => (
+              <tr key={e.id}>
+                <td className={cell}>
+                  <input
+                    className={`${input} w-28`}
+                    value={e.code}
+                    onChange={(ev) => onUpdate(e.id, { code: ev.target.value, id: ev.target.value || e.id })}
+                  />
+                </td>
+                <td className={cell}>
+                  <input
+                    className={`${input} w-72`}
+                    value={e.name}
+                    onChange={(ev) => onUpdate(e.id, { name: ev.target.value })}
+                  />
+                </td>
+                <td className={cell}>
+                  <select
+                    className={input}
+                    value={e.category}
+                    onChange={(ev) => onUpdate(e.id, { category: ev.target.value })}
+                  >
+                    {CATEGORIES.filter((c) => c !== "ทั้งหมด").map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </td>
+                <td className={cell}>
+                  <input type="number" className={`${input} w-14 text-center`} value={e.credits}
+                    onChange={(ev) => onUpdate(e.id, { credits: Number(ev.target.value) })} />
+                </td>
+                <td className={cell}>
+                  <input type="number" className={`${input} w-12 text-center`} value={e.theoryHours}
+                    onChange={(ev) => onUpdate(e.id, { theoryHours: Number(ev.target.value) })} />
+                </td>
+                <td className={cell}>
+                  <input type="number" className={`${input} w-12 text-center`} value={e.practicalHours}
+                    onChange={(ev) => onUpdate(e.id, { practicalHours: Number(ev.target.value) })} />
+                </td>
+                <td className={`${cell} text-center text-sm font-medium text-zinc-700`}>
+                  {e.theoryHours + e.practicalHours}
+                </td>
+                <td className={cell}><DeleteBtn onClick={() => onDelete(e.id)} /></td>
+              </tr>
+            ))}
+            {/* add row */}
+            <tr>
+              <td colSpan={8} className="px-2 py-2">
+                <button onClick={addEntry} className="rounded border border-dashed border-zinc-300 px-3 py-1 text-xs text-zinc-600 hover:bg-zinc-50">
+                  + เพิ่มรายวิชา
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ─── Course Catalog Picker ───────────────────────────────────────────────────
 
-function CourseCatalogPicker({ onAdd }: { onAdd: (entry: CatalogEntry) => void }) {
+function CourseCatalogPicker({ catalog, onAdd }: { catalog: CatalogEntry[]; onAdd: (entry: CatalogEntry) => void }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -616,8 +757,8 @@ function CourseCatalogPicker({ onAdd }: { onAdd: (entry: CatalogEntry) => void }
 
   const q = query.trim().toLowerCase();
   const results = q.length < 1
-    ? COURSE_CATALOG
-    : COURSE_CATALOG.filter(
+    ? catalog
+    : catalog.filter(
         (e) => e.code.toLowerCase().includes(q) || e.name.toLowerCase().includes(q) || e.category.toLowerCase().includes(q)
       );
 

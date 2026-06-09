@@ -1,12 +1,5 @@
-/** Subject catalog parsed from "com eng - all subjects.csv". Read-only reference data. */
-export interface CatalogEntry {
-  code: string;
-  name: string;
-  credits: number;
-  theoryHours: number;
-  practicalHours: number;
-  category: string;
-}
+import type { CatalogEntry } from "./types";
+export type { CatalogEntry }; // re-export for existing imports
 
 /** Parse "N(T-P-S)" → { credits: N, theoryHours: T, practicalHours: P } */
 function parseHours(raw: string): { credits: number; theoryHours: number; practicalHours: number } {
@@ -99,6 +92,7 @@ const RAW: [string, string, string, string][] = [
 ];
 
 export const COURSE_CATALOG: CatalogEntry[] = RAW.map(([code, name, fmt, category]) => ({
+  id: code,
   code,
   name,
   category,

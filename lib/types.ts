@@ -37,6 +37,17 @@ export interface Instructor {
   name: string;
 }
 
+/** One entry in the curriculum subject catalog — a searchable master list of all subjects. */
+export interface CatalogEntry {
+  id: string;           // same as code for convenience
+  code: string;
+  name: string;
+  credits: number;
+  theoryHours: number;
+  practicalHours: number;
+  category: string;
+}
+
 /** A physical room. capacity defaults to 35 but is editable per room. */
 export interface Room {
   id: string;
@@ -67,6 +78,7 @@ export interface Dataset {
   instructors: Instructor[];
   rooms: Room[];
   meetings: Meeting[];
+  catalog: CatalogEntry[];  // curriculum subject master list
 }
 
 export type ViewKind = "section" | "instructor" | "room";
