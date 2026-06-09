@@ -15,7 +15,12 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(git restore *)",
+      "Bash(gh api *)",
+      "WebFetch(domain:ce-tms.vercel.app)",
+      "WebFetch(domain:ce-r1za9uovl-babankbros-projects.vercel.app)",
+      "WebFetch(domain:cetms.vercel.app)"
     ]
   }
 }
