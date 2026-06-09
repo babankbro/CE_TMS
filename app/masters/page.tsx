@@ -75,7 +75,7 @@ function csvToCollection(tab: Tab, rows: Record<string, string>[], draft: Datase
     if (tab === "sections") {
       const items: Section[] = rows.map((r, i) => {
         if (!r.code) throw new Error(`แถว ${i + 2}: code ว่าง`);
-        return { id: r.id || newId("s"), code: r.code, name: r.name ?? "", headcount: Number(r.headcount) || 0 };
+        return { id: r.id || newId("s"), code: (r.code ?? "").toUpperCase(), name: r.name ?? "", headcount: Number(r.headcount) || 0 };
       });
       return { ok: true, items };
     }
@@ -200,6 +200,7 @@ export default function MastersPage() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file || !draft) return;
+    if (!passwordOk()) return;
     setNotice(null);
     file.text().then((text) => {
       const rows = parseCsv(text);
@@ -228,6 +229,7 @@ export default function MastersPage() {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    if (!passwordOk()) return;
     setNotice(null);
     let parsed: unknown;
     try {
@@ -387,7 +389,7 @@ export default function MastersPage() {
           {draft.sections.map((s) => (
             <tr key={s.id}>
               <td className={cell}>
-                <input className={input} value={s.code} onChange={(e) => update<Section>("sections", s.id, { code: e.target.value })} />
+                <input className={input} value={s.code} onChange={(e) => update<Section>("sections", s.id, { code: e.target.value.toUpperCase() })} />
               </td>
               <td className={cell}>
                 <input className={input} value={s.name} onChange={(e) => update<Section>("sections", s.id, { name: e.target.value })} />
